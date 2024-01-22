@@ -1,0 +1,21 @@
+<div class="article-preview">
+    <rw-article-meta [article]="article">
+        <rw-shared-button 
+            [displayText]="'Oke Babe'" 
+            [buttonType]="ButtonType.Like" 
+            [counter]="10"
+            [isPullRight]="true"
+        >
+        </rw-shared-button>
+    </rw-article-meta>
+    <a href="/article/the-song-you" class="preview-link">
+      <h1>{{article.title}}</h1>
+      <p>{{article.description}}</p>
+      <span>Read more...</span>
+      <ul class="tag-list">
+        <ng-container *ngFor="let tag of article.tagList">
+            <li class="tag-default tag-pill tag-outline">{{tag}}</li>
+        </ng-container>
+      </ul>
+    </a>
+  </div>

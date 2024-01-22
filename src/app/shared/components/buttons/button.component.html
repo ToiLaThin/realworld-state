@@ -1,0 +1,16 @@
+<!-- Styling for this component already have, we only decide which class we should attach -> class > style -->
+<button class="btn btn-sm" 
+        [class.pull-xs-right]="isPullRight"
+        [ngClass]="buttonType === ButtonType.Like ? 'btn-outline-primary' : 'btn-outline-secondary'">
+    <ng-container *ngIf="buttonType === ButtonType.Like then isLikeButton else isFollowingButton"></ng-container>
+    <ng-template #isLikeButton>
+        <i class="ion-heart"></i>
+        {{displayText}}
+        <span *ngIf="this.counter !== null && this.counter !== undefined" class="counter">({{counter}})</span>
+    </ng-template>
+    <ng-template #isFollowingButton>
+        <i class="ion-plus-round"></i>
+        {{displayText}}
+        <span *ngIf="this.counter !== null && this.counter !== undefined" class="counter">({{counter}})</span>
+    </ng-template>
+</button>
