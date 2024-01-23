@@ -9,7 +9,7 @@ import { IErrors } from '../../core/ui-models/errors.interface'
 export const loginActions = createActionGroup({
   source: 'Auth Feature',
   events: {
-    Login: props<ILoginRequest>(),
+    'Login': props<{ loginRequest: ILoginRequest }>(),
     'Login Success': props<{ returnedUser: IUser }>(),
     'Login Failure': props<{ errors: IErrors }>(),
   },
@@ -17,8 +17,8 @@ export const loginActions = createActionGroup({
 
 //still have the same namespace, just different variable name
 export const logoutActions = createActionGroup({
-    source: 'Auth Feature',
-    events: {
-        Logout: emptyProps(),
-    },
+  source: 'Auth Feature',
+  events: {
+    Logout: emptyProps(),
+  },
 })

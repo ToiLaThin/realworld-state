@@ -9,6 +9,7 @@ import { CoreModule } from "./core/core.module";
 import { StoreModule } from "@ngrx/store";
 import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 import { EffectsModule } from "@ngrx/effects";
+import { AuthModule } from "./auth/auth.module";
 
 @NgModule({
     declarations: [
@@ -20,6 +21,7 @@ import { EffectsModule } from "@ngrx/effects";
         RouterModule.forRoot(appRoutes),
         SharedModule,
         CoreModule,
+        AuthModule,
         StoreModule.forRoot({}),
         StoreDevtoolsModule.instrument({
             maxAge: 25,

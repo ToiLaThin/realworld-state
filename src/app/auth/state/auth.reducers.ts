@@ -17,7 +17,8 @@ export const authReducer = createReducer(
     (state): IAuthState => ({
       ...state,
       isSubmittingLoginRequest: true,
-      validationErrors: null,
+      validationErrors: null, 
+      // Clear previous errors
     })
   ),
   on(loginActions.loginSuccess, (state, action) => ({
