@@ -3,5 +3,5 @@
 // 2. ui-models are used for the data that is used to map to the UI elements
 //array of strings (each strign is an err message)
 export interface IErrors {
-    [err: string]: string[];
+    errors: object;
 }
