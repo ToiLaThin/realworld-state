@@ -10,7 +10,10 @@ import { StoreModule } from "@ngrx/store";
 import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 import { EffectsModule } from "@ngrx/effects";
 import { AuthModule } from "./auth/auth.module";
-import { HomeModule } from "./home/home.module";
+import { homeFeatureKey, homeReducer } from "./state/home/home.reducers";
+import { authFeatureKey, authReducer } from "./state/auth/auth.reducers";
+import { HomeEffects } from "./state/home/home.effects";
+import { AuthEffect } from "./state/auth/auth.effects";
 
 @NgModule({
     declarations: [
@@ -23,14 +26,22 @@ import { HomeModule } from "./home/home.module";
         SharedModule,
         CoreModule,
         AuthModule,
-        StoreModule.forRoot({}),
+        StoreModule.forRoot({
+            //each feature state is registered here
+            //each feature state only have one reducer
+            //mutiple module can perform actions modify one reducer
+            //we can use action group to know of all actions in a feature state
+            //which action belong to which module
+            [homeFeatureKey]: homeReducer,
+            [authFeatureKey]: authReducer
+        }),
         StoreDevtoolsModule.instrument({
             maxAge: 25,
             logOnly: !isDevMode(),
             autoPause: true,
             traceLimit: 25
         }),
-        EffectsModule.forRoot([])
+        EffectsModule.forRoot([HomeEffects, AuthEffect])
     ],
     providers: [],
     bootstrap: [AppComponent]

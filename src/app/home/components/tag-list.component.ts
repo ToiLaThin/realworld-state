@@ -1,10 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Observable } from "rxjs";
-import { selectorIsLoadingTags, selectorTags } from "../state/home.selectos";
-import { homeFeatureKey } from "../state/home.reducers";
-import { IHomeState } from "../types/homeState.interface";
-import { tagActions } from "../state/home.actions";
+import { selectorIsLoadingTags, selectorTags } from "../../state/home/home.selectos";
+import { homeFeatureKey } from "../../state/home/home.reducers";
+import { IHomeState } from "../../state/home/homeState.interface";
+import { tagActions } from "../../state/home/home.actions";
 
 @Component({
     selector: 'rw-tag-list',

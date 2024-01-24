@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core'
 import { Store } from '@ngrx/store'
 import { Observable } from 'rxjs'
-import { selectorIsLoggedIn } from '../../auth/state/auth.selectors'
-import { IAuthState } from '../../auth/types/authState.interface'
-import { authFeatureKey } from '../../auth/state/auth.reducers'
+import { selectorIsLoggedIn } from '../../state/auth/auth.selectors'
+import { IAuthState } from '../../state/auth/authState.interface'
+import { authFeatureKey } from '../../state/auth/auth.reducers'
 import { ButtonType } from '../../core/ui-models/button-types.enum'
 import { IArticle } from '../../core/models/article.interface'
 

@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store"
-import { IHomeState } from "../types/homeState.interface"
+import { IHomeState } from "./homeState.interface"
 import { tagActions } from "./home.actions"
 
 export const initialHomeState: IHomeState = {
