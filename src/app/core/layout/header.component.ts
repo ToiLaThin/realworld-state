@@ -1,8 +1,8 @@
 import { Component } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { selectorCurrentUser, selectorIsLoggedIn } from '../../auth/state/auth.selectors'
-import { authFeatureKey } from '../../auth/state/auth.reducers'
-import { IAuthState } from '../../auth/types/authState.interface'
+import { selectorCurrentUser, selectorIsLoggedIn } from '../../state/auth/auth.selectors'
+import { authFeatureKey } from '../../state/auth/auth.reducers'
+import { IAuthState } from '../../state/auth/authState.interface'
 import { Observable } from 'rxjs'
 import { IUser } from '../models/user.interface'
 

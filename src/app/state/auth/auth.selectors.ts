@@ -1,5 +1,5 @@
 import { createSelector } from '@ngrx/store'
-import { IAuthState } from '../types/authState.interface'
+import { IAuthState } from './authState.interface'
 import { authFeatureKey } from './auth.reducers'
 import { IErrors } from '../../core/ui-models/errors.interface'
 

@@ -1,6 +1,6 @@
 import { state } from "@angular/animations";
 import { homeFeatureKey } from "./home.reducers";
-import { IHomeState } from './../types/homeState.interface';
+import { IHomeState } from './homeState.interface';
 import { createSelector } from "@ngrx/store";
 
 export const selectHomeFeature = (state: { [homeFeatureKey]: IHomeState}) => state[homeFeatureKey]

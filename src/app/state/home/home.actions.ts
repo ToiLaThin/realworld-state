@@ -3,7 +3,7 @@ import { IErrors } from "../../core/ui-models/errors.interface";
 
 
 export const tagActions = createActionGroup({
-    source: 'Home Feature',
+    source: 'Home Feature Module',
     events: {
         'Get Tags': emptyProps(),
         'Get Tags Success': props<{ loadedTags: string[] }>(),

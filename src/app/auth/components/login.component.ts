@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core'
 import { ILoginRequest } from '../types/loginRequest.interface'
 import { Store } from '@ngrx/store'
-import { loginActions } from '../state/auth.actions'
+import { loginActions } from '../../state/auth/auth.actions'
 import { Observable } from 'rxjs'
-import { selectorHaveValidationErrors, selectorLoginValidationErrors } from '../state/auth.selectors'
-import { authFeatureKey } from '../state/auth.reducers'
-import { IAuthState } from '../types/authState.interface'
-import { IErrors } from '../../core/ui-models/errors.interface'
+import { selectorHaveValidationErrors, selectorLoginValidationErrors } from '../../state/auth/auth.selectors'
+import { authFeatureKey } from '../../state/auth/auth.reducers'
+import { IAuthState } from '../../state/auth/authState.interface'
 import { FormBuilder, Validators } from '@angular/forms'
 @Component({
   selector: 'rw-login',

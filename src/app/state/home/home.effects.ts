@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
-import { TagService } from '../services/tag.service'
+import { TagService } from '../../core/services/tag.service'
 import { tagActions } from './home.actions'
 import { catchError, map, of, switchMap } from 'rxjs'
 
