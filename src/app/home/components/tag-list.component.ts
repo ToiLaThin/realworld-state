@@ -1,10 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Observable } from "rxjs";
-import { selectorIsLoadingTags, selectorTags } from "../../state/home/home.selectos";
+import { selectorIsLoadingTags, selectorTags } from "../../state/home/home.selectors";
 import { homeFeatureKey } from "../../state/home/home.reducers";
 import { IHomeState } from "../../state/home/homeState.interface";
-import { tagActions } from "../../state/home/home.actions";
+import { homeActions, tagActions } from "../../state/home/home.actions";
 
 @Component({
     selector: 'rw-tag-list',
@@ -24,6 +24,10 @@ export class TagListComponent implements OnInit{
 
     trackByFn(index: number, tag: string): string {
         return tag;
+    }
+
+    selectTag(tag: string) {
+        this.store.dispatch(homeActions.filterByTagChanged({ tag: tag }))
     }
 
 

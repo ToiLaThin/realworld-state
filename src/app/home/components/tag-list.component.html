@@ -2,7 +2,7 @@
     <p>Popular Tags</p>
 
     <div class="tag-list" *ngIf="(this.isLoadingTags$|async) === false else loadingTags">
-        <a routerLink="" class="tag-pill tag-default" *ngFor="let tag of (this.tags$|async); trackBy: trackByFn" tr>{{tag}}</a>
+        <a routerLink="" class="tag-pill tag-default" *ngFor="let tag of (this.tags$|async); trackBy: trackByFn" (click)="selectTag(tag)">{{tag}}</a>
     </div>
 
     <ng-template #loadingTags>

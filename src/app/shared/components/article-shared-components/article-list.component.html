@@ -1,0 +1,9 @@
+<div class="app-article-preview" *ngIf="(isLoadingArticles$ | async) === true; else articleListTemplate">
+    Loading articles...
+</div>
+
+<ng-template #articleListTemplate>
+    <ng-container *ngFor="let article of (displayingArticles$ | async); trackBy : trackByFn">
+        <rw-article-preview [article]="article"></rw-article-preview>
+    </ng-container>
+</ng-template>

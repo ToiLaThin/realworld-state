@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from "@angular/forms";
 import { Store } from "@ngrx/store";
 import { IArticle } from "../../core/models/article.interface";
 import { editorActions } from "../../state/home/home.actions";
-import { selectorIsEditorFormSubmitting } from "../../state/home/home.selectos";
+import { selectorIsEditorFormSubmitting } from "../../state/home/home.selectors";
 import { homeFeatureKey } from "../../state/home/home.reducers";
 import { IHomeState } from "../../state/home/homeState.interface";
 import { selectorHaveValidationErrors, selectorValidationErrors } from "../../state/auth/auth.selectors";

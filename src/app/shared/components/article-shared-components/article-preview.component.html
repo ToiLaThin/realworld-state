@@ -1,9 +1,8 @@
 <div class="article-preview">
     <rw-article-meta [article]="article">
         <rw-shared-button 
-            [displayText]="'Oke Babe'" 
             [buttonType]="ButtonType.Like" 
-            [counter]="10"
+            [counter]="article.favoritesCount!"
             [isPullRight]="true"
         >
         </rw-shared-button>
