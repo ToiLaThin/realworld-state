@@ -6,6 +6,8 @@ import { IAuthState } from '../../state/auth/authState.interface'
 import { authFeatureKey } from '../../state/auth/auth.reducers'
 import { ButtonType } from '../../core/ui-models/button-types.enum'
 import { IArticle } from '../../core/models/article.interface'
+import { homeActions } from '../../state/home/home.actions'
+import { FeedType } from '../../core/ui-models/feed-types.enum'
 
 @Component({
   selector: 'rw-home',
@@ -13,43 +15,6 @@ import { IArticle } from '../../core/models/article.interface'
 })
 export class HomeComponent implements OnInit {
   isLoggedIn$!: Observable<boolean | null>
-
-  testArticles: IArticle[] = [
-    {
-      slug: 'how-to-train-your-dragon',
-      title: 'How to train your dragon',
-      description: 'Ever wonder how?',
-      body: 'It takes a Jacobian',
-      tagList: ['dragons', 'training'],
-      createdAt: '2016-02-18T03:22:56.637Z',
-      updatedAt: '2016-02-18T03:48:35.824Z',
-      favorited: false,
-      favoritesCount: 0,
-      author: {
-        username: 'jake',
-        bio: 'I work at statefarm',
-        image: 'https://i.stack.imgur.com/xHWG8.jpg',
-        following: false,
-      },
-    },
-    {
-      slug: 'how-to-train-your-dragon',
-      title: 'How to train your dragon',
-      description: 'Ever wonder how?',
-      body: 'It takes a Jacobian',
-      tagList: ['dragons', 'training'],
-      createdAt: '2016-02-18T03:22:56.637Z',
-      updatedAt: '2016-02-18T03:48:35.824Z',
-      favorited: false,
-      favoritesCount: 0,
-      author: {
-        username: 'jake',
-        bio: 'I work at statefarm',
-        image: 'https://i.stack.imgur.com/xHWG8.jpg',
-        following: false,
-      },
-    },
-  ]
 
   public get ButtonType() {
     return ButtonType
@@ -61,9 +26,15 @@ export class HomeComponent implements OnInit {
     this.isLoggedIn$ = this.store.select(state =>
       selectorIsLoggedIn(state as { [authFeatureKey]: IAuthState })
     )
+    //init load articles
+    this.store.dispatch(homeActions.reloadArticles())
   }
 
-  loadArticle() {}
+  switchToPersonalFeed() {
+    this.store.dispatch(homeActions.setFeedType({ feedType: FeedType.USER }))
+  }
 
-  loadTags() {}
+  switchToGlobalFeed() {
+    this.store.dispatch(homeActions.setFeedType({ feedType: FeedType.GLOBAL }))
+  }
 }

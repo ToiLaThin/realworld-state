@@ -12,18 +12,15 @@
                 <div class="feed-toggle">
                     <ul class="nav nav-pills outline-active">
                         <li class="nav-item" *ngIf="(this.isLoggedIn$ | async) === true">
-                            <a class="nav-link" routerLink="">Your Feed</a>
+                            <a class="nav-link" routerLink="" (click)="switchToPersonalFeed()">Your Feed</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" routerLink="">Global Feed</a>
+                            <a class="nav-link active" routerLink="" (click)="switchToGlobalFeed()">Global Feed</a>
                         </li>
                     </ul>
                 </div>
-
-                <ng-container *ngFor="let article of testArticles">
-                    <rw-article-preview [article]="article"></rw-article-preview>
-                </ng-container>
-
+                
+                <rw-article-list ></rw-article-list>
                 <rw-paginator></rw-paginator>
             </div>
 
