@@ -1,6 +1,7 @@
 import { createReducer, on } from '@ngrx/store'
 import { IAuthState } from './authState.interface'
 import { loginActions, logoutActions, settingsActions } from './auth.actions'
+import { editorActions } from '../home/home.actions'
 export const initialAuthState: IAuthState = {
   isSubmittingLoginRequest: false,
   currentUser: null,
@@ -62,5 +63,9 @@ export const authReducer = createReducer(
   ),
   on(logoutActions.logoutSuccess, state => ({
     ...state,
+  })),  
+  on(editorActions.submitEditorFormFailure, (state, { errors }) => ({
+    ...state,
+    validationErrors: errors,
   }))
 )

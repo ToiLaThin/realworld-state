@@ -26,3 +26,8 @@ export const selectorLoginValidationErrors = createSelector(
   selectAuthFeature,
   authState => (authState.validationErrors as IErrors).errors
 )
+
+export const selectorValidationErrors = createSelector(
+  selectAuthFeature,
+  authState => (authState.validationErrors as IErrors).errors
+)

@@ -12,3 +12,7 @@ export const selectorIsLoadingTags = createSelector(
     selectHomeFeature,
     homeState => homeState.isLoadingTags
 )
+export const selectorIsEditorFormSubmitting = createSelector(
+    selectHomeFeature,
+    homeState => homeState.isEditorFormSubmitting
+)
