@@ -73,6 +73,10 @@ export const homeReducer = createReducer(
   //action won't have any props, because that will make component have logic to pass props to action
   //instead, we will get the filterBy, feedType from store in the effect
   on(homeActions.reloadArticles, (state): IHomeState => ({ ...state, isLoadingArticle: true })),
+  on(
+    homeActions.reloadArticlesWithoutDisplayIsLoading,
+    (state): IHomeState => ({ ...state, isLoadingArticle: false })
+  ),
   on(homeActions.loadArticlesSuccess, (state, action) => ({
     ...state,
     isLoadingArticle: false,
@@ -110,7 +114,6 @@ export const homeReducer = createReducer(
     ...state,
     filterBy: { ...state.filterBy, tag: action.tag, author: null, favorited: null },
   })),
-
 
   on(homeActions.favoriteArticle, (state, action) => ({
     ...state,

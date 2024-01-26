@@ -45,6 +45,7 @@ export const homeActions = createActionGroup({
 
         //init will dispatch load articles with init home state
         'Reload Articles': emptyProps(),
+        'Reload Articles Without Display Is Loading': emptyProps(),
         'Load Articles Success': props<{loadedArticles: IArticle[], totalArticlesCount: number}>(),
         'Load Articles Failure': props<{errors: IErrors}>(),
 

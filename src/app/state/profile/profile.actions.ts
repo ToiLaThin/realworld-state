@@ -8,5 +8,10 @@ export const profileActions = createActionGroup({
         'Profile Of User Selected': props<{ username: string }>(),
         'Get Profile Success': props<{ returnedProfile: IProfile }>(),
         'Get Profile Failure': props<{ errors: IErrors }>(),
+        'Follow Profile': props<{ username: string }>(),
+        'Unfollow Profile': props<{ username: string }>(),
+
+        'Follow Or Unfollow Profile Success': props<{ returnedProfile: IProfile }>(),
+        'Follow Or Unfollow Profile Failure': props<{ errors: IErrors }>(),
     }
 })

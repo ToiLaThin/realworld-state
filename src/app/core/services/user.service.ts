@@ -5,6 +5,7 @@ import { Observable, map, tap } from 'rxjs'
 import { IUser } from '../models/user.interface'
 import { Injectable } from '@angular/core'
 import { JwtService } from '../../shared/services/jwt.service'
+import { IProfile } from '../models/profile.interface'
 
 //since state is register in root
 //the service must also registered in root
@@ -29,5 +30,17 @@ export class UserService {
           this.jwtService.saveToken(returnedUser.token)
         })
       )
+  }
+
+  followUser(username: string): Observable<IProfile> {
+    return this.http
+      .post<{ profile: IProfile }>(`${env.API_BASE_URL}/profiles/${username}/follow`, {})
+      .pipe(map(resp => resp.profile))
+  }
+
+  unfollowUser(username: string): Observable<IProfile> {
+    return this.http
+      .delete<{ profile: IProfile }>(`${env.API_BASE_URL}/profiles/${username}/follow`, {})
+      .pipe(map(resp => resp.profile))
   }
 }

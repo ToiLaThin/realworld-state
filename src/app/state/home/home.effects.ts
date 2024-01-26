@@ -75,7 +75,7 @@ export class HomeEffects {
   //get state data from store in an effect, and pass it to service
   homeArticlesReloadEffects$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(homeActions.reloadArticles),
+      ofType(homeActions.reloadArticles, homeActions.reloadArticlesWithoutDisplayIsLoading),
       switchMap(() => {
         let filterValue: IFilter | null = null
         let feedTypeValue: FeedType | null = null
@@ -151,4 +151,11 @@ export class HomeEffects {
   //     map(() => homeActions.reloadArticles())
   //   )
   // )
+
+  afterFavoriteOrUnfavoriteArticleEffects$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(homeActions.favoriteOrUnfavoriteArticleSuccess),
+      map(() => homeActions.reloadArticlesWithoutDisplayIsLoading())
+    )
+  )
 }

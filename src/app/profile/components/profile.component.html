@@ -8,16 +8,25 @@
                     <p>
                         {{(profileSelected$|async)?.bio}}
                     </p>
+                    
                     <button class="btn btn-sm btn-outline-secondary action-btn"
-                        *ngIf="( this.isThisProfileOfCurrentUser$ | async ) !== true; else ifProfileOfCurrentTemplate">
+                        *ngIf="(this.isThisProfileOfCurrentUser$ | async ) !== true; else ifProfileOfCurrentTemplate"
+                        (click)="isCurrentUserFollowingThisProfile ? unfollowProfile() : followProfile()"
+                        [disabled]="(isFollowOrUnfollowProfileInProgress$ | async) === true">
                         <i class="ion-plus-round"></i>
-                        &nbsp; Follow {{(profileSelected$|async)?.username}}
+                        <ng-container
+                            *ngIf="isCurrentUserFollowingThisProfile === true; else followProfileTemplate">
+                            &nbsp; Unfollow {{(profileSelected$|async)?.username}}
+                        </ng-container>
+                        <ng-template #followProfileTemplate>
+                            &nbsp; Follow {{(profileSelected$|async)?.username}}
+                        </ng-template>
                     </button>
                     <ng-template #ifProfileOfCurrentTemplate>
-                        <button class="btn btn-sm btn-outline-secondary action-btn">
+                        <a [routerLink]="['/settings']" class="btn btn-sm btn-outline-secondary action-btn">
                             <i class="ion-gear-a"></i>
                             &nbsp; Edit Profile Settings
-                        </button>
+                        </a>
                     </ng-template>
                 </div>
             </div>

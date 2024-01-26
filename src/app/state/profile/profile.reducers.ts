@@ -5,6 +5,8 @@ import { profileActions } from './profile.actions'
 export const initialProfileState: IProfileState = {
   isLoadingProfile: false,
   viewingProfile: null,
+
+  isFollowOrUnfollowProfileInProgress: false,
 }
 
 export const profileFeatureKey = 'profile'
@@ -33,4 +35,33 @@ export const profileReducer = createReducer(
         })
     ),
 
+    on(
+        profileActions.followProfile,
+        (state) => ({
+            ...state,
+            isFollowOrUnfollowProfileInProgress: true,
+        })
+    ),
+    on(
+        profileActions.unfollowProfile,
+        (state) => ({
+            ...state,
+            isFollowOrUnfollowProfileInProgress: true,
+        })
+    ),
+    on(
+        profileActions.followOrUnfollowProfileSuccess,
+        (state, action) => ({
+            ...state,
+            isFollowOrUnfollowProfileInProgress: false,
+            viewingProfile: action.returnedProfile,
+        })
+    ),
+    on(
+        profileActions.followOrUnfollowProfileFailure,
+        (state) => ({
+            ...state,
+            isFollowOrUnfollowProfileInProgress: false,
+        })
+    ),
 )

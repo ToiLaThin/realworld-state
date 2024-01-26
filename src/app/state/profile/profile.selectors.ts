@@ -26,3 +26,8 @@ export const selectorIsThisProfileOfCurrentUser = createSelector(
     return authState.currentUser?.username === profileState.viewingProfile?.username
   }
 )
+
+export const selectorIsFollowOrUnfollowProfileInProgress = createSelector(
+  selectProfileFeature,
+  profileState => profileState.isFollowOrUnfollowProfileInProgress
+)
