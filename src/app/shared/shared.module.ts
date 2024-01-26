@@ -7,8 +7,15 @@ import { HttpClientModule } from '@angular/common/http'
 import { RouterModule } from '@angular/router'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { ArticleListComponent } from './components/article-shared-components/article-list.component'
+import { PaginatorComponent } from './components/article-shared-components/paginator.component'
 @NgModule({
-  declarations: [SharedButtonComponent, ArticleMetaComponent, ArticlePreviewComponent, ArticleListComponent],
+  declarations: [
+    SharedButtonComponent,
+    ArticleMetaComponent,
+    ArticlePreviewComponent,
+    ArticleListComponent,
+    PaginatorComponent,
+  ],
   imports: [CommonModule, HttpClientModule, RouterModule],
   providers: [],
   exports: [
@@ -21,6 +28,7 @@ import { ArticleListComponent } from './components/article-shared-components/art
     ArticlePreviewComponent,
     ArticleListComponent,
     SharedButtonComponent,
+    PaginatorComponent,
   ],
 })
 export class SharedModule {}

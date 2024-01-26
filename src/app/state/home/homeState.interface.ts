@@ -13,4 +13,6 @@ export interface IHomeState {
   isLoadingArticle: boolean
   feedType: FeedType
   filterBy: IFilter
+
+  isSubmittingFavorite: boolean  
 }

@@ -8,7 +8,7 @@ import { IHomeState } from "../../../state/home/homeState.interface";
 
 @Component({
     selector: 'rw-article-list',
-    templateUrl: './article-list.component.html'
+    templateUrl: './article-list.component.html',
 })
 export class ArticleListComponent implements OnInit {
     //this is a component because it is shared between home and profile modules and many more

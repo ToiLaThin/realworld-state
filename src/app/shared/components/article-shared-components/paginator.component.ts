@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { selectorCurrentPage, selectorTotalArticlesCount } from '../../state/home/home.selectors'
-import { homeFeatureKey } from '../../state/home/home.reducers'
-import { IHomeState } from '../../state/home/homeState.interface'
+import { selectorCurrentPage, selectorTotalArticlesCount } from '../../../state/home/home.selectors'
+import { homeFeatureKey } from '../../../state/home/home.reducers'
+import { IHomeState } from '../../../state/home/homeState.interface'
 import { Observable, map } from 'rxjs'
-import { homeActions } from '../../state/home/home.actions'
+import { homeActions } from '../../../state/home/home.actions'
 
 @Component({
   selector: 'rw-paginator',

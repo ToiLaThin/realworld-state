@@ -4,6 +4,8 @@
             [buttonType]="ButtonType.Like" 
             [counter]="article.favoritesCount!"
             [isPullRight]="true"
+            [isArticleFavorited]="article.favorited"
+            (buttonClicked)="onLikeButtonClicked($event)"
         >
         </rw-shared-button>
     </rw-article-meta>

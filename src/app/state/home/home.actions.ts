@@ -47,5 +47,11 @@ export const homeActions = createActionGroup({
         'Reload Articles': emptyProps(),
         'Load Articles Success': props<{loadedArticles: IArticle[], totalArticlesCount: number}>(),
         'Load Articles Failure': props<{errors: IErrors}>(),
+
+
+        'Favorite Article': props<{articleSlug: string}>(),
+        'Unfavorite Article': props<{articleSlug: string}>(),
+        'Favorite Or Unfavorite Article Success': props<{returnArticle: IArticle}>(),
+        'Favorite Or Unfavorite Article Failure': props<{errors: IErrors}>(),
     }
 })

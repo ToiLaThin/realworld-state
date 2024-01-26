@@ -13,6 +13,9 @@ export const appRoutes: Routes = [
     {
         path: 'editor',
         loadChildren: () => import('./editor/editor.module').then(m => m.EditorModule),
-
+    },
+    {
+        path: 'profile',
+        loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule),
     }
 ];

@@ -14,6 +14,8 @@ import { homeFeatureKey, homeReducer } from "./state/home/home.reducers";
 import { authFeatureKey, authReducer } from "./state/auth/auth.reducers";
 import { HomeEffects } from "./state/home/home.effects";
 import { AuthEffect } from "./state/auth/auth.effects";
+import { ProfileEffect } from "./state/profile/profile.effects";
+import { profileFeatureKey, profileReducer } from "./state/profile/profile.reducers";
 
 @NgModule({
     declarations: [
@@ -33,7 +35,8 @@ import { AuthEffect } from "./state/auth/auth.effects";
             //we can use action group to know of all actions in a feature state
             //which action belong to which module
             [homeFeatureKey]: homeReducer,
-            [authFeatureKey]: authReducer
+            [authFeatureKey]: authReducer,
+            [profileFeatureKey]: profileReducer
         }),
         StoreDevtoolsModule.instrument({
             maxAge: 25,
@@ -41,7 +44,7 @@ import { AuthEffect } from "./state/auth/auth.effects";
             autoPause: true,
             traceLimit: 25
         }),
-        EffectsModule.forRoot([HomeEffects, AuthEffect])
+        EffectsModule.forRoot([HomeEffects, AuthEffect, ProfileEffect])
     ],
     providers: [],
     bootstrap: [AppComponent]

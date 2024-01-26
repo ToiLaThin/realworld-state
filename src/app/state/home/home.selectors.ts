@@ -35,7 +35,17 @@ export const selectorCurrentPage = createSelector(
   selectHomeFeature,
   homeState => homeState.currentPage
 )
-export const selectorFilterBy = createSelector(
+export const selectorFilterBy = createSelector(selectHomeFeature, homeState => homeState.filterBy)
+
+export const selectorIsOnProfileFavoritesTab = createSelector(
   selectHomeFeature,
-  homeState => homeState.filterBy
+  homeState =>
+    homeState.filterBy.favorited !== undefined &&
+    homeState.filterBy.favorited !== null &&
+    homeState.filterBy.favorited !== ''
+)
+
+export const selectorIsSubmittingFavoriteRequest = createSelector(
+  selectHomeFeature,
+  homeState => homeState.isSubmittingFavorite
 )

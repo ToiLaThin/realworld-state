@@ -66,4 +66,16 @@ export class ArticleService {
         }))
       )
   }
+
+  favoriteArticle(slug: string): Observable<IArticle> {
+    return this.http
+      .post<{ article: IArticle }>(`${env.API_BASE_URL}/articles/${slug}/favorite`, {})
+      .pipe(map((response: { article: IArticle }) => response.article))
+  }
+
+  unfavoriteArticle(slug: string): Observable<IArticle> {
+    return this.http
+      .delete<{ article: IArticle }>(`${env.API_BASE_URL}/articles/${slug}/favorite`)
+      .pipe(map((response: { article: IArticle }) => response.article))
+  }
 }

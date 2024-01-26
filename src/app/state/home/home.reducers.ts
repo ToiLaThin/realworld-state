@@ -20,6 +20,8 @@ export const initialHomeState: IHomeState = {
     author: null,
     favorited: null,
   },
+
+  isSubmittingFavorite: false,
 }
 export const homeFeatureKey = 'home'
 export const homeReducer = createReducer(
@@ -84,7 +86,7 @@ export const homeReducer = createReducer(
 
   //caused effect to reload page
   on(homeActions.choosePage, (state, action) => {
-      //complex clone state
+    //complex clone state
     const newOffset = (action.page - 1) * state.filterBy.limit
     return {
       ...state,
@@ -98,14 +100,32 @@ export const homeReducer = createReducer(
   })),
   on(homeActions.filterByAuthorChanged, (state, action) => ({
     ...state,
-    filterBy: { ...state.filterBy, author: action.author },
+    filterBy: { ...state.filterBy, author: action.author, favorited: null, tag: null },
   })),
   on(homeActions.filterByFavoritedChanged, (state, action) => ({
     ...state,
-    filterBy: { ...state.filterBy, favorited: action.favorited },
+    filterBy: { ...state.filterBy, favorited: action.favorited, author: null, tag: null },
   })),
   on(homeActions.filterByTagChanged, (state, action) => ({
     ...state,
-    filterBy: { ...state.filterBy, tag: action.tag },
+    filterBy: { ...state.filterBy, tag: action.tag, author: null, favorited: null },
+  })),
+
+
+  on(homeActions.favoriteArticle, (state, action) => ({
+    ...state,
+    isSubmittingFavorite: true,
+  })),
+  on(homeActions.unfavoriteArticle, (state, action) => ({
+    ...state,
+    isSubmittingFavorite: true,
+  })),
+  on(homeActions.favoriteOrUnfavoriteArticleSuccess, (state, action) => ({
+    ...state,
+    isSubmittingFavorite: false,
+  })),
+  on(homeActions.favoriteOrUnfavoriteArticleFailure, (state, action) => ({
+    ...state,
+    isSubmittingFavorite: false,
   }))
 )

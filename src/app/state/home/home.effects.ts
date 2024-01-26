@@ -116,4 +116,39 @@ export class HomeEffects {
       map(() => homeActions.reloadArticles())
     )
   )
+
+  favoriteArticleEffects$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(homeActions.favoriteArticle),
+      switchMap(action => { //can use a if check action type here
+        return this.articleService.favoriteArticle(action.articleSlug).pipe(
+          map(article => homeActions.favoriteOrUnfavoriteArticleSuccess({ returnArticle: article })),
+          catchError(errors => of(homeActions.favoriteOrUnfavoriteArticleFailure({ errors })))
+        )
+      })
+    )
+  )
+
+  unfavoriteArticleEffects$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(homeActions.unfavoriteArticle),
+      switchMap(action => {
+        return this.articleService.unfavoriteArticle(action.articleSlug).pipe(
+          map(article => homeActions.favoriteOrUnfavoriteArticleSuccess({ returnArticle: article })),
+          catchError(errors => of(homeActions.favoriteOrUnfavoriteArticleFailure({ errors })))
+        )
+      })
+    )
+  )
+
+  //TODO: this effect is will cause the template is loading display in home page
+  // which cause the whole article list to be rerendered, not just one button
+      //so please make another effect to reload the article list but not modify the isLoadingArticle state
+
+  // afterFavoriteOrUnfavoriteArticleEffects$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(homeActions.favoriteOrUnfavoriteArticleSuccess),
+  //     map(() => homeActions.reloadArticles())
+  //   )
+  // )
 }
