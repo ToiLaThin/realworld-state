@@ -84,4 +84,8 @@ export class ArticleService {
       .get<{ article: IArticle }>(`${env.API_BASE_URL}/articles/${slug}`)
       .pipe(map((response: { article: IArticle }) => response.article))
   }
+
+  deleteArticle(slug: string) {
+    return this.http.delete(`${env.API_BASE_URL}/articles/${slug}`)
+  }
 }

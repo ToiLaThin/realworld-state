@@ -23,6 +23,11 @@ export const selectorIsCurrentUserAuthorOfSelectedArticle = createSelector(
   selectAuthFeatureLocal,
   selectArticleFeatureLocal,
   (authState, articleState) => {
-    return authState.currentUser?.username === articleState.selectedArticle?.author
+    return authState.currentUser?.username === articleState.selectedArticle?.author?.username
   }
+)
+
+export const selectorArticleComments = createSelector(
+    selectArticleFeature,
+    articleState => articleState.displayingComments
 )

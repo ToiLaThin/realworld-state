@@ -3,14 +3,13 @@ import { IProfile } from '../../core/models/profile.interface'
 import { Observable, Subscription, concatMap, map, of, tap } from 'rxjs'
 import { ActivatedRoute, Router } from '@angular/router'
 import { Store } from '@ngrx/store'
-import { selectorCurrentUser, selectorIsLoggedIn } from '../../state/auth/auth.selectors'
+import { selectorIsLoggedIn } from '../../state/auth/auth.selectors'
 import { authFeatureKey } from '../../state/auth/auth.reducers'
 import { IAuthState } from './../../state/auth/authState.interface'
 import { profileActions } from '../../state/profile/profile.actions'
 import {
   selectorIsThisProfileOfCurrentUser,
   selectorViewingProfile,
-  selectorIsFollowOrUnfollowProfileInProgress,
 } from '../../state/profile/profile.selectors'
 import { profileFeatureKey } from '../../state/profile/profile.reducers'
 import { IProfileState } from '../../state/profile/profileState,interface'
@@ -18,6 +17,7 @@ import { homeActions } from '../../state/home/home.actions'
 import { selectorIsOnProfileFavoritesTab } from '../../state/home/home.selectors'
 import { IHomeState } from '../../state/home/homeState.interface'
 import { homeFeatureKey } from '../../state/home/home.reducers'
+import { ButtonType } from '../../core/ui-models/button-types.enum'
 
 @Component({
   selector: 'rw-profile',
@@ -28,13 +28,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
   isThisProfileOfCurrentUser$!: Observable<boolean>
   profileUsername!: string
   isOnFavoritedTab$!: Observable<boolean>
-  isFollowOrUnfollowProfileInProgress$!: Observable<boolean>
+
   //   routeParamsSub!: Subscription
   isCurrentUserFollowingThisProfile!: boolean
   isUserAuthenticated!: boolean
   isUserAuthenticatedSubscription!: Subscription
   isCurrentUserFollowingThisProfileSubscription!: Subscription
 
+  public get ButtonType() {
+    return ButtonType
+  }
   constructor(private route: ActivatedRoute, private store: Store, private router: Router) {}
 
   ngOnDestroy(): void {
@@ -81,9 +84,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.isOnFavoritedTab$ = this.store.select(state =>
       selectorIsOnProfileFavoritesTab(state as { [homeFeatureKey]: IHomeState })
     )
-    this.isFollowOrUnfollowProfileInProgress$ = this.store.select(state =>
-      selectorIsFollowOrUnfollowProfileInProgress(state as { [profileFeatureKey]: IProfileState })
-    )
+
     this.profileUsername = this.route.snapshot.paramMap.get('username') as string
     this.store.dispatch(profileActions.profileOfUserSelected({ username: this.profileUsername }))
     //the article display will be of this author (profile), if filtered by tag or favorited, it will be reset to null

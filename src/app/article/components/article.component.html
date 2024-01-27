@@ -14,23 +14,29 @@
         <div class="container">
           <h1>{{selectedArticle.title}}</h1>
 
-          <rw-article-meta [article]="selectedArticle">
-            <button class="btn btn-sm btn-outline-secondary">
-              <i class="ion-plus-round"></i>
-              &nbsp; Follow {{selectedArticle.author?.username}}
-            </button>
-            &nbsp;&nbsp;
-            <button class="btn btn-sm btn-outline-primary">
-              <i class="ion-heart"></i>
-              &nbsp; Favorite Post <span class="counter">({{selectedArticle.favoritesCount}})</span>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary">
-              <i class="ion-edit"></i> Edit Article
-            </button>
-            <button class="btn btn-sm btn-outline-danger">
-              <i class="ion-trash-a"></i> Delete Article
-            </button>
-          </rw-article-meta>
+          <ng-container *ngIf="(this.isCurrUserArticleAuthor$ | async) === true; else currUserNotArticleAuthor">
+            <rw-article-meta [article]="selectedArticle">
+              <a class="btn btn-sm btn-outline-secondary" [routerLink]="['/editor', selectedArticle.slug]">
+                <i class="ion-edit"></i> Edit Article
+              </a>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteArticle()">
+                <i class="ion-trash-a"></i> Delete Article
+              </button>
+            </rw-article-meta>
+          </ng-container>
+          <ng-template #currUserNotArticleAuthor>
+            <rw-article-meta [article]="selectedArticle">
+              <rw-shared-button [buttonType]="ButtonType.Following"
+                [isProfileFollowing]="selectedArticle.author?.following"
+                (buttonFollowingClicked)="selectedArticle.author?.following ? unfollowProfile() : followProfile()"
+                [displayText]="selectedArticle.author?.following ? ' Unfollow ' + selectedArticle.author?.username: ' Follow ' + selectedArticle.author?.username">
+              </rw-shared-button>
+              <rw-shared-button [buttonType]="ButtonType.Like" [counter]="selectedArticle.favoritesCount!"
+                [isArticleFavorited]="selectedArticle.favorited" (buttonFavoriteClicked)="onLikeButtonClicked($event)"
+                [displayText]="selectedArticle.favorited ? 'Unfavorite Article' : 'Favorite Article'">
+              </rw-shared-button>
+            </rw-article-meta>
+          </ng-template>
         </div>
       </div>
 
@@ -50,73 +56,37 @@
         <hr />
 
         <div class="article-actions">
-          <rw-article-meta [article]="selectedArticle">
-            <button class="btn btn-sm btn-outline-secondary">
-              <i class="ion-plus-round"></i>
-              &nbsp; Follow {{selectedArticle.author?.username}}
-            </button>
-            &nbsp;&nbsp;
-            <button class="btn btn-sm btn-outline-primary">
-              <i class="ion-heart"></i>
-              &nbsp; Favorite Post <span class="counter">({{selectedArticle.favoritesCount}})</span>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary">
-              <i class="ion-edit"></i> Edit Article
-            </button>
-            <button class="btn btn-sm btn-outline-danger">
-              <i class="ion-trash-a"></i> Delete Article
-            </button>
-          </rw-article-meta>
+          <ng-container *ngIf="(this.isCurrUserArticleAuthor$ | async) === true; else currUserNotArticleAuthor">
+            <rw-article-meta [article]="selectedArticle">
+              <a class="btn btn-sm btn-outline-secondary" [routerLink]="['/editor', selectedArticle.slug]">
+                <i class="ion-edit"></i> Edit Article
+              </a>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteArticle()">
+                <i class="ion-trash-a"></i> Delete Article
+              </button>
+            </rw-article-meta>
+          </ng-container>
         </div>
 
-        <div class="row">
-          <div class="col-xs-12 col-md-8 offset-md-2">
-            <form class="card comment-form">
-              <div class="card-block">
-                <textarea class="form-control" placeholder="Write a comment..." rows="3"></textarea>
-              </div>
-              <div class="card-footer">
-                <img src="http://i.imgur.com/Qr71crq.jpg" class="comment-author-img" />
-                <button class="btn btn-sm btn-primary">Post Comment</button>
-              </div>
-            </form>
-
-            <div class="card">
-              <div class="card-block">
-                <p class="card-text">
-                  With supporting text below as a natural lead-in to additional content.
-                </p>
-              </div>
-              <div class="card-footer">
-                <a routerLink="/profile/author" class="comment-author">
-                  <img src="http://i.imgur.com/Qr71crq.jpg" class="comment-author-img" />
-                </a>
-                &nbsp;
-                <a routerLink="/profile/jacob-schmidt" class="comment-author">Jacob Schmidt</a>
-                <span class="date-posted">Dec 29th</span>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-block">
-                <p class="card-text">
-                  With supporting text below as a natural lead-in to additional content.
-                </p>
-              </div>
-              <div class="card-footer">
-                <a routerLink="/profile/author" class="comment-author">
-                  <img src="http://i.imgur.com/Qr71crq.jpg" class="comment-author-img" />
-                </a>
-                &nbsp;
-                <a routerLink="/profile/jacob-schmidt" class="comment-author">Jacob Schmidt</a>
-                <span class="date-posted">Dec 29th</span>
-                <span class="mod-options">
-                  <i class="ion-trash-a"></i>
-                </span>
-              </div>
+        <ng-container *ngIf="(this.isUserAuthenticated$ | async) === false || (this.isUserAuthenticated$ | async) === null; else commentSectionIfAuthenticated">
+          <div>
+            <a [routerLink]="['/login']">Sign in</a> or <a [routerLink]="['/register']">sign up</a> to add comments on this article.
+          </div>
+        </ng-container>
+        <ng-template #commentSectionIfAuthenticated>
+          <div class="row">
+            <div class="col-xs-12 col-md-8 offset-md-2">
+              
+  
+              <rw-comment-form [articleSlug]="this.selectedArticleSlug"></rw-comment-form>
+              <ng-container *ngFor="let comment of (this.articleComments$ | async)">
+                <rw-comment [comment]="comment" [articleSlug]="this.selectedArticleSlug"></rw-comment>
+              </ng-container>
+  
+              
             </div>
           </div>
-        </div>
+        </ng-template>
       </div>
     </div>
   </ng-container>

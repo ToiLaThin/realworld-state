@@ -8,20 +8,29 @@
                     <p>
                         {{(profileSelected$|async)?.bio}}
                     </p>
-                    
-                    <button class="btn btn-sm btn-outline-secondary action-btn"
+
+                    <rw-shared-button [buttonType]="ButtonType.Following"
+                        [isProfileFollowing]="isCurrentUserFollowingThisProfile"
+                        (buttonFollowingClicked)="isCurrentUserFollowingThisProfile ? unfollowProfile() : followProfile()"
+                        [displayText]="isCurrentUserFollowingThisProfile ? ' Unfollow ' + (profileSelected$|async)?.username: ' Follow ' + (profileSelected$|async)?.username">
+                    </rw-shared-button>
+                    <!-- There is an $event pass out from the dumb component but we simply ignore since we use two method -->
+
+
+                    <!-- <button class="btn btn-sm btn-outline-secondary action-btn"
                         *ngIf="(this.isThisProfileOfCurrentUser$ | async ) !== true; else ifProfileOfCurrentTemplate"
                         (click)="isCurrentUserFollowingThisProfile ? unfollowProfile() : followProfile()"
                         [disabled]="(isFollowOrUnfollowProfileInProgress$ | async) === true">
                         <i class="ion-plus-round"></i>
-                        <ng-container
-                            *ngIf="isCurrentUserFollowingThisProfile === true; else followProfileTemplate">
+                        <ng-container *ngIf="isCurrentUserFollowingThisProfile === true; else followProfileTemplate">
                             &nbsp; Unfollow {{(profileSelected$|async)?.username}}
                         </ng-container>
                         <ng-template #followProfileTemplate>
                             &nbsp; Follow {{(profileSelected$|async)?.username}}
                         </ng-template>
-                    </button>
+                    </button> -->
+
+                    
                     <ng-template #ifProfileOfCurrentTemplate>
                         <a [routerLink]="['/settings']" class="btn btn-sm btn-outline-secondary action-btn">
                             <i class="ion-gear-a"></i>
