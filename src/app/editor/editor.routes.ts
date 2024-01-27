@@ -6,6 +6,11 @@ export const editorRoutes: Routes = [
     {
         path: '',
         component: EditorComponent,
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard],        
+    },
+    {
+        path: ':slug',
+        component: EditorComponent,
+        canActivate: [AuthGuard],        
     }
 ]

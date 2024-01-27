@@ -6,6 +6,6 @@ export const settingRoutes : Routes = [
     {
         path: '',
         component: SettingsComponent,
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard]        
     }
 ]

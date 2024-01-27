@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { Store } from '@ngrx/store'
-import { Observable } from 'rxjs'
+import { Observable, Subscription } from 'rxjs'
 import { selectorIsLoggedIn } from '../../state/auth/auth.selectors'
 import { IAuthState } from '../../state/auth/authState.interface'
 import { authFeatureKey } from '../../state/auth/auth.reducers'
@@ -8,9 +8,10 @@ import { ButtonType } from '../../core/ui-models/button-types.enum'
 import { IArticle } from '../../core/models/article.interface'
 import { homeActions } from '../../state/home/home.actions'
 import { FeedType } from '../../core/ui-models/feed-types.enum'
-import { selectorFeedType } from '../../state/home/home.selectors'
+import { selectorFeedType, selectorSelectedTag, selectorTags } from '../../state/home/home.selectors'
 import { IHomeState } from '../../state/home/homeState.interface'
 import { homeFeatureKey } from '../../state/home/home.reducers'
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'rw-home',
@@ -19,6 +20,12 @@ import { homeFeatureKey } from '../../state/home/home.reducers'
 export class HomeComponent implements OnInit {
   isLoggedIn$!: Observable<boolean | null>
   selectedFeedType$!: Observable<FeedType>
+
+
+  selectedTag$!: Observable<string | null>
+  isLoggedIn!: boolean
+  isLoggedInSubscription!: Subscription
+
   public get ButtonType() {
     return ButtonType
   }
@@ -26,7 +33,7 @@ export class HomeComponent implements OnInit {
     return FeedType
   }
 
-  constructor(private store: Store) {}
+  constructor(private store: Store, private router: Router) {}
 
   ngOnInit(): void {
     this.isLoggedIn$ = this.store.select(state =>
@@ -35,9 +42,18 @@ export class HomeComponent implements OnInit {
     this.selectedFeedType$ = this.store.select(state => selectorFeedType(state as { [homeFeatureKey]: IHomeState }))
     //init load articles
     this.store.dispatch(homeActions.reloadArticles())
+    this.isLoggedInSubscription = this.isLoggedIn$.subscribe(isLoggedIn => {
+      this.isLoggedIn = isLoggedIn!
+    })
+
+    this.selectedTag$ = this.store.select(state => selectorSelectedTag(state as { [homeFeatureKey]: IHomeState }))
   }
 
   switchToPersonalFeed() {
+    if (!this.isLoggedIn) {
+      this.router.navigateByUrl('/login')
+      return
+    }
     this.store.dispatch(homeActions.setFeedType({ feedType: FeedType.USER }))
   }
 

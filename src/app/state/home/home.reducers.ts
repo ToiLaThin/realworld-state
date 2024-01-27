@@ -100,19 +100,32 @@ export const homeReducer = createReducer(
   }),
   on(homeActions.setFeedType, (state, action) => ({
     ...state,
+    //must also reset the page ortherwise, the query result might be blank
+    //must also reset the offset ortherwise, the query result might be blank, because if only change the page num, the previous offset will still be the same => the wrong query
+    currentPage: 1,
     feedType: action.feedType,
+    filterBy: { ...state.filterBy, author: null, favorited: null, tag: null, offset: 0 },
   })),
   on(homeActions.filterByAuthorChanged, (state, action) => ({
     ...state,
-    filterBy: { ...state.filterBy, author: action.author, favorited: null, tag: null },
+    currentPage: 1,
+    filterBy: { ...state.filterBy, author: action.author, favorited: null, tag: null, offset: 0 },
   })),
   on(homeActions.filterByFavoritedChanged, (state, action) => ({
     ...state,
-    filterBy: { ...state.filterBy, favorited: action.favorited, author: null, tag: null },
+    currentPage: 1,
+    filterBy: {
+      ...state.filterBy,
+      favorited: action.favorited,
+      author: null,
+      tag: null,
+      offset: 0,
+    },
   })),
   on(homeActions.filterByTagChanged, (state, action) => ({
     ...state,
-    filterBy: { ...state.filterBy, tag: action.tag, author: null, favorited: null },
+    currentPage: 1,
+    filterBy: { ...state.filterBy, tag: action.tag, author: null, favorited: null, offset: 0 },
   })),
 
   on(homeActions.favoriteArticle, (state, action) => ({

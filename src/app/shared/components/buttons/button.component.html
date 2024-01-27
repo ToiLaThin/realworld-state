@@ -1,8 +1,8 @@
 <!-- Styling for this component already have, we only decide which class we should attach -> class > style -->
-<button class="btn btn-sm" (click)="this.buttonClicked.emit(isArticleFavorited)"
+<button class="btn btn-sm action-btn" (click)=" buttonType === ButtonType.Like ? this.buttonFavoriteClicked.emit(isArticleFavorited) : this.buttonFollowingClicked.emit(isProfileFollowing)"
         [class.pull-xs-right]="isPullRight"
         [ngClass]="buttonType === ButtonType.Like ? this.likeButtonClass : 'btn-outline-secondary'"
-        [disabled]="(this.isAnyButtonSubmittingFavoriteReq$ | async) === true"
+        [disabled]="(this.isAnyButtonSubmittingFavoriteReq$ | async) === true || (this.isFollowOrUnfollowProfileInProgress$ | async) === true"
         >
     <ng-container *ngIf="buttonType === ButtonType.Like then isLikeButton else isFollowingButton"></ng-container>
     <ng-template #isLikeButton>

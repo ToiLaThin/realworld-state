@@ -10,6 +10,7 @@ import { homeFeatureKey } from './home.reducers'
 import { IHomeState } from './homeState.interface'
 import { IFilter } from '../../core/models/filter.interface'
 import { FeedType } from '../../core/ui-models/feed-types.enum'
+import { Router } from '@angular/router'
 
 @Injectable()
 export class HomeEffects {
@@ -17,7 +18,8 @@ export class HomeEffects {
     private store: Store,
     private actions$: Actions,
     private tagService: TagService,
-    private articleService: ArticleService
+    private articleService: ArticleService,
+    private router: Router
   ) {}
   tagLoadEffects$ = createEffect(() =>
     this.actions$.pipe(
@@ -54,6 +56,7 @@ export class HomeEffects {
       switchMap(action => {
         return this.articleService.createArticle(action.article).pipe(
           map(article => editorActions.submitEditorFormSuccess({ submittedArticle: article })),
+          tap(action => this.router.navigateByUrl('/')),
           catchError(errors => of(editorActions.submitEditorFormFailure({ errors: errors })))
         )
       })
@@ -66,6 +69,7 @@ export class HomeEffects {
       switchMap(action => {
         return this.articleService.updateArticle(action.article).pipe(
           map(article => editorActions.submitEditorFormSuccess({ submittedArticle: article })),
+          tap(action => this.router.navigateByUrl('/')),
           catchError(errors => of(editorActions.submitEditorFormFailure({ errors: errors })))
         )
       })
@@ -96,7 +100,12 @@ export class HomeEffects {
         return this.articleService
           .listArticles(filterValue as unknown as IFilter, feedTypeValue as unknown as FeedType)
           .pipe(
-            map(response => homeActions.loadArticlesSuccess({ loadedArticles: response.articles, totalArticlesCount: response.articlesCount })),
+            map(response =>
+              homeActions.loadArticlesSuccess({
+                loadedArticles: response.articles,
+                totalArticlesCount: response.articlesCount,
+              })
+            ),
             catchError(errors => of(homeActions.loadArticlesFailure({ errors })))
           )
       })
@@ -120,9 +129,12 @@ export class HomeEffects {
   favoriteArticleEffects$ = createEffect(() =>
     this.actions$.pipe(
       ofType(homeActions.favoriteArticle),
-      switchMap(action => { //can use a if check action type here
+      switchMap(action => {
+        //can use a if check action type here
         return this.articleService.favoriteArticle(action.articleSlug).pipe(
-          map(article => homeActions.favoriteOrUnfavoriteArticleSuccess({ returnArticle: article })),
+          map(article =>
+            homeActions.favoriteOrUnfavoriteArticleSuccess({ returnArticle: article })
+          ),
           catchError(errors => of(homeActions.favoriteOrUnfavoriteArticleFailure({ errors })))
         )
       })
@@ -134,7 +146,9 @@ export class HomeEffects {
       ofType(homeActions.unfavoriteArticle),
       switchMap(action => {
         return this.articleService.unfavoriteArticle(action.articleSlug).pipe(
-          map(article => homeActions.favoriteOrUnfavoriteArticleSuccess({ returnArticle: article })),
+          map(article =>
+            homeActions.favoriteOrUnfavoriteArticleSuccess({ returnArticle: article })
+          ),
           catchError(errors => of(homeActions.favoriteOrUnfavoriteArticleFailure({ errors })))
         )
       })
@@ -143,7 +157,7 @@ export class HomeEffects {
 
   //TODO: this effect is will cause the template is loading display in home page
   // which cause the whole article list to be rerendered, not just one button
-      //so please make another effect to reload the article list but not modify the isLoadingArticle state
+  //so please make another effect to reload the article list but not modify the isLoadingArticle state
 
   // afterFavoriteOrUnfavoriteArticleEffects$ = createEffect(() =>
   //   this.actions$.pipe(
@@ -152,7 +166,7 @@ export class HomeEffects {
   //   )
   // )
 
-  afterFavoriteOrUnfavoriteArticleEffects$ = createEffect(() =>
+  afterFavoriteOrUnfavoriteArticleReloadArticlesEffects$ = createEffect(() =>
     this.actions$.pipe(
       ofType(homeActions.favoriteOrUnfavoriteArticleSuccess),
       map(() => homeActions.reloadArticlesWithoutDisplayIsLoading())

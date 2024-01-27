@@ -49,3 +49,9 @@ export const selectorIsSubmittingFavoriteRequest = createSelector(
   selectHomeFeature,
   homeState => homeState.isSubmittingFavorite
 )
+
+
+export const selectorSelectedTag = createSelector(
+  selectHomeFeature,
+  homeState => homeState.filterBy.tag
+)
