@@ -78,4 +78,10 @@ export class ArticleService {
       .delete<{ article: IArticle }>(`${env.API_BASE_URL}/articles/${slug}/favorite`)
       .pipe(map((response: { article: IArticle }) => response.article))
   }
+
+  getArticle(slug: string): Observable<IArticle> {
+    return this.http
+      .get<{ article: IArticle }>(`${env.API_BASE_URL}/articles/${slug}`)
+      .pipe(map((response: { article: IArticle }) => response.article))
+  }
 }
