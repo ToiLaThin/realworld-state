@@ -2,7 +2,7 @@
     <a routerLink="/profile/{{article.author?.username}}"><img src="{{article.author?.image}}" /></a>
     <div class="info">
         <a routerLink="/profile/{{article.author?.username}}" class="author">{{article.author?.username}}</a>
-        <span class="date">{{article.updatedAt}}</span>
+        <span class="date">{{article.updatedAt | date}}</span>
     </div>
     <!-- Can add any other component inside -->
     <ng-content></ng-content>

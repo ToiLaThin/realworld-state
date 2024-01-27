@@ -1,0 +1,123 @@
+<ng-container *ngIf="(this.isLoadingArticle$ | async) === true; else loadArticleTemplate">
+  <div class="article-page">
+    <div class="banner">
+      <div class="container">
+        <h1>Loading article...</h1>
+      </div>
+    </div>
+  </div>
+</ng-container>
+<ng-template #loadArticleTemplate>
+  <ng-container *ngIf="(this.selectedArticle$ | async) as selectedArticle; ">
+    <div class="article-page">
+      <div class="banner">
+        <div class="container">
+          <h1>{{selectedArticle.title}}</h1>
+
+          <rw-article-meta [article]="selectedArticle">
+            <button class="btn btn-sm btn-outline-secondary">
+              <i class="ion-plus-round"></i>
+              &nbsp; Follow {{selectedArticle.author?.username}}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-sm btn-outline-primary">
+              <i class="ion-heart"></i>
+              &nbsp; Favorite Post <span class="counter">({{selectedArticle.favoritesCount}})</span>
+            </button>
+            <button class="btn btn-sm btn-outline-secondary">
+              <i class="ion-edit"></i> Edit Article
+            </button>
+            <button class="btn btn-sm btn-outline-danger">
+              <i class="ion-trash-a"></i> Delete Article
+            </button>
+          </rw-article-meta>
+        </div>
+      </div>
+
+      <div class="container page">
+        <div class="row article-content">
+          <div class="col-md-12">
+            <p>
+              {{selectedArticle.description}}
+            </p>
+            <div [innerHTML]="selectedArticle.body | markdown"></div>
+            <ul class="tag-list">
+              <li class="tag-default tag-pill tag-outline" *ngFor="let tag of selectedArticle.tagList">{{tag}}</li>
+            </ul>
+          </div>
+        </div>
+
+        <hr />
+
+        <div class="article-actions">
+          <rw-article-meta [article]="selectedArticle">
+            <button class="btn btn-sm btn-outline-secondary">
+              <i class="ion-plus-round"></i>
+              &nbsp; Follow {{selectedArticle.author?.username}}
+            </button>
+            &nbsp;&nbsp;
+            <button class="btn btn-sm btn-outline-primary">
+              <i class="ion-heart"></i>
+              &nbsp; Favorite Post <span class="counter">({{selectedArticle.favoritesCount}})</span>
+            </button>
+            <button class="btn btn-sm btn-outline-secondary">
+              <i class="ion-edit"></i> Edit Article
+            </button>
+            <button class="btn btn-sm btn-outline-danger">
+              <i class="ion-trash-a"></i> Delete Article
+            </button>
+          </rw-article-meta>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-12 col-md-8 offset-md-2">
+            <form class="card comment-form">
+              <div class="card-block">
+                <textarea class="form-control" placeholder="Write a comment..." rows="3"></textarea>
+              </div>
+              <div class="card-footer">
+                <img src="http://i.imgur.com/Qr71crq.jpg" class="comment-author-img" />
+                <button class="btn btn-sm btn-primary">Post Comment</button>
+              </div>
+            </form>
+
+            <div class="card">
+              <div class="card-block">
+                <p class="card-text">
+                  With supporting text below as a natural lead-in to additional content.
+                </p>
+              </div>
+              <div class="card-footer">
+                <a routerLink="/profile/author" class="comment-author">
+                  <img src="http://i.imgur.com/Qr71crq.jpg" class="comment-author-img" />
+                </a>
+                &nbsp;
+                <a routerLink="/profile/jacob-schmidt" class="comment-author">Jacob Schmidt</a>
+                <span class="date-posted">Dec 29th</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-block">
+                <p class="card-text">
+                  With supporting text below as a natural lead-in to additional content.
+                </p>
+              </div>
+              <div class="card-footer">
+                <a routerLink="/profile/author" class="comment-author">
+                  <img src="http://i.imgur.com/Qr71crq.jpg" class="comment-author-img" />
+                </a>
+                &nbsp;
+                <a routerLink="/profile/jacob-schmidt" class="comment-author">Jacob Schmidt</a>
+                <span class="date-posted">Dec 29th</span>
+                <span class="mod-options">
+                  <i class="ion-trash-a"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</ng-template>
