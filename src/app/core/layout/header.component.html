@@ -6,24 +6,28 @@
                 <!-- Add "active" class when you're on that page" -->
                 <a class="nav-link active" routerLink="/">Home</a>
             </li>
-            <li class="nav-item" *ngIf="(isLoggedIn$ | async) !== true">
+            @if ((this.isLoggedIn$ | async) !== true) {
+            <li class="nav-item">
                 <a class="nav-link" routerLink="/login">Sign in</a>
             </li>
-            <li class="nav-item" *ngIf="(isLoggedIn$ | async) !== true">
+            <li class="nav-item">
                 <a class="nav-link" routerLink="/register">Sign up</a>
             </li>
-            <li class="nav-item" *ngIf="(isLoggedIn$ | async) === true">
+            }
+            @else {
+            <li class="nav-item">
                 <a class="nav-link" routerLink="/editor"> <i class="ion-compose"></i>&nbsp;New Article </a>
             </li>
-            <li class="nav-item" *ngIf="(isLoggedIn$ | async) === true">
+            <li class="nav-item">
                 <a class="nav-link" routerLink="/settings"> <i class="ion-gear-a"></i>&nbsp;Settings </a>
             </li>
-            <li class="nav-item" *ngIf="(isLoggedIn$ | async) === true">
+            <li class="nav-item">
                 <a class="nav-link" routerLink="/profile/{{(currUser$|async)?.username}}">
                     <img src="{{(currUser$|async)?.image}}" class="user-pic" />
                     {{(currUser$|async)?.username}}
                 </a>
             </li>
+            }
 
             <!-- IF WE USE DIRECTIVE, HTML TEMPLATE WILL BE CLEANER, PLUS THIS COMPONENT WON'T HAVE TO SELECT isLoggedIn$ FROM STATE -->
             <!-- <li class="nav-item" *ngIf="(isLoggedIn$ | async) === true">

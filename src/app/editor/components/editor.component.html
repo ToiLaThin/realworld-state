@@ -2,9 +2,11 @@
     <div class="container page">
       <div class="row">
         <div class="col-md-10 offset-md-1 col-xs-12">
-          <ul class="error-messages" *ngIf="(this.isHavingValidationErrors$|async) === true">
-            <li>{{this.editorFormErrors$|async}}</li>
-          </ul>
+          @if ((this.isHavingValidationErrors$|async) === true) {
+            <ul class="error-messages">
+              <li>{{this.editorFormErrors$|async}}</li>
+            </ul>
+          }
   
           <form [formGroup]="editorForm" (ngSubmit)="submitForm()" #editorFormTemplateVar>
             <fieldset>

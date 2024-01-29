@@ -68,22 +68,21 @@
           </ng-container>
         </div>
 
-        <ng-container *ngIf="(this.isUserAuthenticated$ | async) === false || (this.isUserAuthenticated$ | async) === null; else commentSectionIfAuthenticated">
+        <ng-container
+          *ngIf="(this.isUserAuthenticated$ | async) === false || (this.isUserAuthenticated$ | async) === null; else commentSectionIfAuthenticated">
           <div>
-            <a [routerLink]="['/login']">Sign in</a> or <a [routerLink]="['/register']">sign up</a> to add comments on this article.
+            <a [routerLink]="['/login']">Sign in</a> or <a [routerLink]="['/register']">sign up</a> to add comments on
+            this article.
           </div>
         </ng-container>
         <ng-template #commentSectionIfAuthenticated>
           <div class="row">
             <div class="col-xs-12 col-md-8 offset-md-2">
-              
-  
               <rw-comment-form [articleSlug]="this.selectedArticleSlug"></rw-comment-form>
-              <ng-container *ngFor="let comment of (this.articleComments$ | async)">
-                <rw-comment [comment]="comment" [articleSlug]="this.selectedArticleSlug"></rw-comment>
-              </ng-container>
-  
-              
+              @for (comment of (this.articleComments$ | async); track comment.id) {
+                <rw-comment [comment]="comment" [articleSlug]="this.selectedArticleSlug">
+                </rw-comment>
+              }
             </div>
           </div>
         </ng-template>
