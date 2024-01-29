@@ -11,8 +11,10 @@
         &nbsp;
         <a routerLink="/profile/{{comment.author.username}}" class="comment-author">{{comment.author.username}}</a>
         <span class="date-posted">{{comment.updatedAt | date}}</span>
-        <span class="mod-options" (click)="deleteThisComment(comment.id)" *ngIf="this.isCurrentUserCommentAuthor === true">
+        @if (this.isCurrentUserCommentAuthor === true) {
+        <span class="mod-options" (click)="deleteThisComment(comment.id)">
             <i class="ion-trash-a"></i>
         </span>
+        }
     </div>
 </div>

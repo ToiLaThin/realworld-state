@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core'
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core'
 import { IComment } from '../../core/models/comment.interface'
 import { Store } from '@ngrx/store'
 import { Observable, Subscription } from 'rxjs'
@@ -11,6 +11,7 @@ import { IAuthState } from '../../state/auth/authState.interface'
 @Component({
   selector: 'rw-comment',
   templateUrl: './comment.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommentComponent implements OnInit, OnDestroy {
   @Input() comment!: IComment

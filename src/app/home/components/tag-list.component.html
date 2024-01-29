@@ -1,11 +1,14 @@
 <div class="sidebar">
     <p>Popular Tags</p>
 
-    <div class="tag-list" *ngIf="(this.isLoadingTags$|async) === false else loadingTags">
-        <a routerLink="" class="tag-pill tag-default" *ngFor="let tag of (this.tags$|async); trackBy: trackByFn" (click)="selectTag(tag)">{{tag}}</a>
+    @if ((this.isLoadingTags$|async) === false) {
+    <div class="tag-list">
+        <a routerLink="" class="tag-pill tag-default" *ngFor="let tag of (this.tags$|async); trackBy: trackByFn"
+            (click)="selectTag(tag)">{{tag}}</a>
     </div>
+    }
+    @else {
+    <div>Loading tags...</div>
+    }
 
-    <ng-template #loadingTags>
-        <div>Loading tags...</div>
-    </ng-template>
 </div>

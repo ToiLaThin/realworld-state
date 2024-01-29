@@ -20,10 +20,4 @@ export class ArticleListComponent implements OnInit {
         this.displayingArticles$ = this.store.select(state => selectorDisplayingArticles(state as { [homeFeatureKey]: IHomeState }))
         this.isLoadingArticles$ = this.store.select(state => selectorIsLoadingArticle(state as { [homeFeatureKey]: IHomeState }))        
     }
-
-    //identify each article by its slug, trackBy is a performance optimization
-    //it will only re-render the article that has changed
-    trackByFn(index: number, article: IArticle) {
-        return article.slug
-    }
 }

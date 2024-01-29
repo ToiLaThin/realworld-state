@@ -3,7 +3,7 @@
 </div>
 
 <ng-template #articleListTemplate>
-    <ng-container *ngFor="let article of (displayingArticles$ | async); trackBy : trackByFn">
+    @for (article of (displayingArticles$ | async); track article.slug) {
         <rw-article-preview [article]="article"></rw-article-preview>
-    </ng-container>
+    }
 </ng-template>
