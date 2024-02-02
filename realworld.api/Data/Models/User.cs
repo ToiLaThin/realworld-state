@@ -2,8 +2,6 @@ namespace Realworld.Api.Models
 {
     public class User
     {
-        public int Id { get; set; }
-
         public string Email { get; set; }
 
         public string Token { get; set; }
@@ -18,10 +16,14 @@ namespace Realworld.Api.Models
 
         //join tables, navigation properties
         //1 to n mapping
-        public ICollection<Comment> CommentsAboutArticle { get; set; }
+        public ICollection<Comment>? CommentsAboutArticle { get; set; }
 
         //n to n mapping
-        public ICollection<ArticleFavoriteLink> ArticlesFavoritedByUserMapping { get; set; }
+        public ICollection<ArticleFavoriteLink>? ArticlesFavoritedByUserMapping { get; set; }
+
+        public ICollection<UserLink> Followers { get; set; } = new List<UserLink>();
+
+        public ICollection<UserLink> FollowedUsers { get; set; } = new List<UserLink>();
 
         public User() {}
 

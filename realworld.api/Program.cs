@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Realworld.Api.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,7 +9,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddDbContext<ConduitContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("ConduitConnString"));
+    // no host name like . or PostgreSQL 15
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

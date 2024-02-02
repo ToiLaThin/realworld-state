@@ -13,19 +13,27 @@ namespace Realworld.Api.Models
 
         public DateTime UpdatedAt { get; set; }
 
-        public User Author { get; set; }
+        public User Author { get; set; } = null!;
 
         public ICollection<Tag> Tags { get; set; } = new List<Tag>();
 
         public ICollection<Comment> ArticleComments { get; set; } = new List<Comment>();
 
+        //this article is favorited by these users
         public ICollection<ArticleFavoriteLink> UserFavoritesArticleMappings { get; set; } = new List<ArticleFavoriteLink>();
 
         //computed properties
         public bool Favorited { get; set; }
 
-        public int FavoritesCount { get; set; }
-        public Article() {}
+        public int FavoritesCount { get; set; } = 0;
+        public Article(string title, string description, string body) {
+            Title = title;
+            Description = description;
+            Body = body;
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+            Slug = title.Replace(" ", "-").ToLower();
+        }
                 
     }
 }
