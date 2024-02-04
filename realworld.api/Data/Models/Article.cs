@@ -1,3 +1,5 @@
+using Realworld.Api.Extension;
+
 namespace Realworld.Api.Models
 {
     public class Article
@@ -32,7 +34,7 @@ namespace Realworld.Api.Models
             Body = body;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
-            Slug = title.Replace(" ", "-").ToLower();
+            Slug = title.GenerateSlug();
         }
                 
     }
