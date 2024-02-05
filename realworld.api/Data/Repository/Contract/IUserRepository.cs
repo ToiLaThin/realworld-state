@@ -7,6 +7,8 @@ namespace Realworld.Api.Data
         public Task<User?> GetUserByUsernameAsync(string username);
         public Task AddUserAsync(User user);
 
+        public Task UpdateUserAsync(User user);
+
         public Task<bool> IsFollowingAsync(string username, string followerName);
 
         public void Follow(string username, string followerName);
