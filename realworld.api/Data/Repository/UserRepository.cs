@@ -14,6 +14,10 @@ namespace Realworld.Api.Data
         await _context.Users.AddAsync(user);
     }
 
+    public async Task UpdateUserAsync(User user)
+    {
+        _context.Users.Update(user);
+    }
 
     public async Task<User?> GetUserByEmailAsync(string email)
     {
