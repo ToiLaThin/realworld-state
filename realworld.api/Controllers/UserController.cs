@@ -7,11 +7,21 @@ using Realworld.Api.Data;
 using Realworld.Api.Dto;
 using Realworld.Api.Services;
 using Realworld.Api.Utils;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Security.Claims;
 
 namespace Realworld.Api.Controllers
 {
+
+    /// <summary>
+    /// generic record, will be json serialized as {"user": { ... }} if is User not Data
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="User"></param>
+    public record UserEnvelope<T>([Required] T User);
+
+    
     [ApiController]
     public class UserController: ControllerBase {
 
