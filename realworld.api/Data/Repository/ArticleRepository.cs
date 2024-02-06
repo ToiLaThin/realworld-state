@@ -21,10 +21,10 @@ namespace Realworld.Api.Data
       _context.Articles.Remove(article);
     }
 
-    public async Task<Article?> GetArticleBySlugAsync(string slug, bool asNoTracking)
+    public async Task<Article?> GetArticleBySlugAsync(string slug, bool asNoTracking, string? username = null)
     {
       //ThenInclude is from authen we continue include
-      var query = _context.Articles.Include(a => a.Author).Include(a => a.Tags).AsQueryable();
+      var query = _context.Articles.Include(a => a.Author).ThenInclude(au => au.Followers).Include(a => a.Tags).AsQueryable();
       if (asNoTracking) {
         query = query.AsNoTracking();
       }
@@ -35,11 +35,13 @@ namespace Realworld.Api.Data
       }
       //calc
       article.FavoritesCount = await _context.ArticleFavoriteLinks.CountAsync(afl => afl.ArticleId == article.Id);
-      article.Favorited = article.FavoritesCount > 0;
+      article.Favorited = username is not null ? 
+        await _context.ArticleFavoriteLinks.AnyAsync(afl => afl.ArticleId == article.Id && afl.Username == username) 
+        : false;
       return article;
     }
 
-    public async Task<ArticlesResponseDto> GetArticlesAsync(ArticlesQuery articlesQuery, string? username, bool isFeed)
+    public async Task<ArticlesWithTotalCountDto> GetArticlesAsync(ArticlesQueryDto articlesQuery, string? username, bool isFeed)
     {
       var query = _context.Articles.AsQueryable();
 
@@ -66,7 +68,7 @@ namespace Realworld.Api.Data
                       .Include(a => a.Tags)
                       .Include(a => a.Author);
       var totalArticle = await query.CountAsync();
-      return new ArticlesResponseDto(await pagedQuery.ToListAsync(), totalArticle);
+      return new ArticlesWithTotalCountDto(await pagedQuery.ToListAsync(), totalArticle);
     }
   }
 }

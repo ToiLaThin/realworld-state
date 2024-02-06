@@ -29,6 +29,7 @@ namespace Realworld.Api.Models
 
         public int FavoritesCount { get; set; } = 0;
         public Article(string title, string description, string body) {
+            Id = Guid.NewGuid();
             Title = title;
             Description = description;
             Body = body;

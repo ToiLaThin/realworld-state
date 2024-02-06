@@ -71,12 +71,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<ICurrentUsernameAccessor, CurrentUsernameAccessor>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<IArticleService, ArticleService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
