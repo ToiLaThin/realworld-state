@@ -26,7 +26,7 @@ namespace Realworld.Api.Data
 
     public async Task<User?> GetUserByUsernameAsync(string username)
     {
-      return await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Username == username);
+      return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
     }
 
     public async Task<bool> IsFollowingAsync(string username, string followerName)

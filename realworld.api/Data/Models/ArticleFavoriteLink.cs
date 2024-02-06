@@ -9,5 +9,11 @@ namespace Realworld.Api.Models
         public User User { get; set; }
 
         public ArticleFavoriteLink() {}
+
+        public ArticleFavoriteLink(Guid articleId, string username)
+        {
+            ArticleId = articleId;
+            Username = username;
+        }
     }
 }

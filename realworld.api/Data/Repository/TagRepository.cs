@@ -18,12 +18,16 @@ namespace Realworld.Api.Data
     public async Task<IEnumerable<Tag>> UpsertTagsAsync(IEnumerable<string> tags)
     {
       foreach (var tag in tags) {
-        var existingTag = await _context.Tags.AsNoTracking().FirstOrDefaultAsync(t => t.Id == tag);
+        //dot not use as no tracking, because we need to add new tag, assign it to the new article in CreateArticleAsync service  
+        // as no tracking can cause error when we add new tag, because it's not tracked      
+        var existingTag = await _context.Tags.FirstOrDefaultAsync(t => t.Id == tag);
         if (existingTag != null) {
           continue;
         }
         await _context.Tags.AddAsync(new Tag(tag));
       }
+      await _context.SaveChangesAsync(); //so it can return the new added tags
+      //should return only request added tags only, not all tags
       return _context.Tags.AsEnumerable();
     }
   }
