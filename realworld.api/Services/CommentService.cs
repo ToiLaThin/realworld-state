@@ -40,8 +40,7 @@ namespace Realworld.Api.Services
             _unitOfWork.CommentRepository.AddArticleComment(toAddComment);
             await _unitOfWork.CommitTransactionAsync(transaction);
             bool isUserFollowingHimself = await _unitOfWork.UserRepository.IsFollowingAsync(user.Username, currentUsername); //is author (current user) is followed by himself
-            return CommentMapper.MapCommentToCommentSingleResponseDto(toAddComment, isUserFollowingHimself);
-            
+            return CommentMapper.MapCommentToCommentSingleResponseDto(toAddComment, isUserFollowingHimself);          
         }
 
         public async Task DeleteCommentAsync(string slug, int commentId)

@@ -86,6 +86,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization(opt => opt.AddPolicy(
     Policy.OptionalAuthenticated, p => p.AddRequirements(new OptionalAuthRequirement())
 ));
+
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<ICurrentUsernameAccessor, CurrentUsernameAccessor>();
