@@ -7,6 +7,8 @@ using Microsoft.OpenApi.Models;
 using Realworld.Api.Data;
 using Realworld.Api.Utils;
 using Realworld.Api.Services;
+using Realworld.Api.Utils.Auth;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,6 +70,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     }
 );
+builder.Services.AddAuthorization(opt => opt.AddPolicy(
+    Policy.OptionalAuthenticated, p => p.AddRequirements(new OptionalAuthRequirement())
+));
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<ICurrentUsernameAccessor, CurrentUsernameAccessor>();
@@ -77,6 +82,9 @@ builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<IArticleService, ArticleService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+
+//register the auth handler
+builder.Services.AddSingleton<IAuthorizationHandler, OptionalAuthHandler>();
 
 var app = builder.Build();
 
