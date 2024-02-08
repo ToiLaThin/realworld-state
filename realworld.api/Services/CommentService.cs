@@ -1,9 +1,11 @@
+using System.Net;
 using System.Runtime.CompilerServices;
 using Realworld.Api.Data;
 using Realworld.Api.Dto;
 using Realworld.Api.Mapping;
 using Realworld.Api.Models;
 using Realworld.Api.Utils;
+using Realworld.Api.Utils.ExceptionHandling;
 
 namespace Realworld.Api.Services
 {
@@ -24,9 +26,8 @@ namespace Realworld.Api.Services
             string currentUsername = _currentUsernameAccessor.GetCurrentUsername();
             var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(currentUsername);
             var article = await _unitOfWork.ArticleRepository.GetArticleBySlugAsync(slug, asNoTracking: false);
-            if (article == null)
-            {
-                throw new Exception("not found article with" + slug);
+            if (article == null) {
+                throw new ConduitException(HttpStatusCode.NotFound, new { Article = ConduitErrors.NOT_FOUND });
             }
             var transaction = await _unitOfWork.BeginTransactionAsync();
 
@@ -47,13 +48,13 @@ namespace Realworld.Api.Services
         {
             var article = await _unitOfWork.ArticleRepository.GetArticleBySlugAsync(slug, asNoTracking: false);
             if (article == null) {
-                throw new Exception("not found article with" + slug);
+                throw new ConduitException(HttpStatusCode.NotFound, new { Article = ConduitErrors.NOT_FOUND });
             }
 
             var comments = await _unitOfWork.CommentRepository.GetCommentsBySlugAsync(slug, null);
             var commentToDel = comments.FirstOrDefault(c => c.Id == commentId);
             if (commentToDel == null) {
-                throw new Exception("not found comment with" + commentId);
+                throw new ConduitException(HttpStatusCode.NotFound, new { Comment = ConduitErrors.NOT_FOUND });
             }
 
             var transaction = await _unitOfWork.BeginTransactionAsync();

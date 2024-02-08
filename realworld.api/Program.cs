@@ -9,12 +9,25 @@ using Realworld.Api.Utils;
 using Realworld.Api.Services;
 using Realworld.Api.Utils.Auth;
 using Microsoft.AspNetCore.Authorization;
+using Realworld.Api.Utils.ExceptionHandling;
+using FluentValidation.AspNetCore;
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+// https://stackoverflow.com/a/59924569/23165722 & https://github.dev/gothinkster/aspnetcore-realworld-example-app
+// this is the config require to use FluentValidation before filter
+builder.Services.AddControllers(opts => opts.Filters.Add(new ValidateModelStateFilter()))
+                .ConfigureApiBehaviorOptions(opts => opts.SuppressModelStateInvalidFilter = true);
+                //this is require for filter to get called (default behaviour if [ApiController] is used is that return problem details)
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-builder.Services.AddControllers();
+//builder.Services.Configure<ApiBehaviorOptions>(opts => opts.SuppressModelStateInvalidFilter = false);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
@@ -88,6 +101,7 @@ builder.Services.AddSingleton<IAuthorizationHandler, OptionalAuthHandler>();
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

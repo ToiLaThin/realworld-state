@@ -1,9 +1,11 @@
 
+using System.Net;
 using Realworld.Api.Data;
 using Realworld.Api.Extension;
 using Realworld.Api.Mapping;
 using Realworld.Api.Models;
 using Realworld.Api.Utils;
+using Realworld.Api.Utils.ExceptionHandling;
 
 namespace Realworld.Api.Services
 {
@@ -118,17 +120,17 @@ namespace Realworld.Api.Services
             string currentUsername = _currentUsernameAccessor.GetCurrentUsername();
             var article = await _unitOfWork.ArticleRepository.GetArticleBySlugAsync(slug, asNoTracking: true, currentUsername);
             if (article == null) {
-                throw new Exception("not found article");
+                throw new ConduitException(HttpStatusCode.NotFound, new { Article = ConduitErrors.NOT_FOUND });
             }
             var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(currentUsername);
             if (user == null) {
-                throw new Exception("not found user");
+                throw new ConduitException(HttpStatusCode.NotFound, new { User = ConduitErrors.NOT_FOUND });
             }
 
             var transaction = await _unitOfWork.BeginTransactionAsync();
             var articleFavoriteLink = await _unitOfWork.ArticleFavoriteRepository.GetArticleFavoriteAsync(user.Username, article.Id);
             if (articleFavoriteLink != null) {
-                throw new Exception("already favorited");
+                throw new ConduitException(HttpStatusCode.NotFound, new { ArticleFavorite = ConduitErrors.IN_USE });
             }
             _unitOfWork.ArticleFavoriteRepository.AddArticleFavorite(new ArticleFavoriteLink(article.Id, user.Username));
             await _unitOfWork.CommitTransactionAsync(transaction);
@@ -141,21 +143,18 @@ namespace Realworld.Api.Services
         {
             string currentUsername = _currentUsernameAccessor.GetCurrentUsername();
             var article = await _unitOfWork.ArticleRepository.GetArticleBySlugAsync(slug, asNoTracking: true, currentUsername);
-            if (article == null)
-            {
-                throw new Exception("not found article");
+            if (article == null) {
+                throw new ConduitException(HttpStatusCode.NotFound, new { Article = ConduitErrors.NOT_FOUND });
             }
             var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(currentUsername);
-            if (user == null)
-            {
-                throw new Exception("not found user");
+            if (user == null) {
+                throw new ConduitException(HttpStatusCode.NotFound, new { User = ConduitErrors.NOT_FOUND });
             }
 
             var transaction = await _unitOfWork.BeginTransactionAsync();
             var articleFavoriteLink = await _unitOfWork.ArticleFavoriteRepository.GetArticleFavoriteAsync(user.Username, article.Id);
-            if (articleFavoriteLink == null)
-            {
-                throw new Exception("not favorited");
+            if (articleFavoriteLink == null) {
+                throw new ConduitException(HttpStatusCode.NotFound, new { ArticleFavorite = ConduitErrors.NOT_FOUND });
             }
             _unitOfWork.ArticleFavoriteRepository.RemoveArticleFavorite(new ArticleFavoriteLink(article.Id, user.Username));
             await _unitOfWork.CommitTransactionAsync(transaction);
