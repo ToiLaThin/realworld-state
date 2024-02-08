@@ -1,7 +1,11 @@
+using System.Net;
+using System.Runtime.CompilerServices;
 using Realworld.Api.Data;
 using Realworld.Api.Dto;
+using Realworld.Api.Mapping;
 using Realworld.Api.Models;
 using Realworld.Api.Utils;
+using Realworld.Api.Utils.ExceptionHandling;
 
 namespace Realworld.Api.Services
 {
@@ -22,9 +26,8 @@ namespace Realworld.Api.Services
             string currentUsername = _currentUsernameAccessor.GetCurrentUsername();
             var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(currentUsername);
             var article = await _unitOfWork.ArticleRepository.GetArticleBySlugAsync(slug, asNoTracking: false);
-            if (article == null)
-            {
-                throw new Exception("not found article with" + slug);
+            if (article == null) {
+                throw new ConduitException(HttpStatusCode.NotFound, new { Article = ConduitErrors.NOT_FOUND });
             }
             var transaction = await _unitOfWork.BeginTransactionAsync();
 
@@ -36,32 +39,21 @@ namespace Realworld.Api.Services
 
             _unitOfWork.CommentRepository.AddArticleComment(toAddComment);
             await _unitOfWork.CommitTransactionAsync(transaction);
-            return new CommentSingleResponseDto(
-                toAddComment.Id,
-                toAddComment.CreatedAt,
-                toAddComment.UpdatedAt,
-                toAddComment.Body,
-                new ProfileResponseDto(
-                    user.Username,
-                    user.Bio,
-                    user.Image,
-                    await _unitOfWork.UserRepository.IsFollowingAsync(user.Username, currentUsername) //is author (current user) is followed by himself
-                )
-            );
-            
+            bool isUserFollowingHimself = await _unitOfWork.UserRepository.IsFollowingAsync(user.Username, currentUsername); //is author (current user) is followed by himself
+            return CommentMapper.MapCommentToCommentSingleResponseDto(toAddComment, isUserFollowingHimself);          
         }
 
         public async Task DeleteCommentAsync(string slug, int commentId)
         {
             var article = await _unitOfWork.ArticleRepository.GetArticleBySlugAsync(slug, asNoTracking: false);
             if (article == null) {
-                throw new Exception("not found article with" + slug);
+                throw new ConduitException(HttpStatusCode.NotFound, new { Article = ConduitErrors.NOT_FOUND });
             }
 
             var comments = await _unitOfWork.CommentRepository.GetCommentsBySlugAsync(slug, null);
             var commentToDel = comments.FirstOrDefault(c => c.Id == commentId);
             if (commentToDel == null) {
-                throw new Exception("not found comment with" + commentId);
+                throw new ConduitException(HttpStatusCode.NotFound, new { Comment = ConduitErrors.NOT_FOUND });
             }
 
             var transaction = await _unitOfWork.BeginTransactionAsync();
@@ -75,17 +67,8 @@ namespace Realworld.Api.Services
             var comments = await _unitOfWork.CommentRepository.GetCommentsBySlugAsync(slug, currentUsername);
             var commentsResp = new List<CommentSingleResponseDto>();
             foreach (var comment in comments) {
-                var commentSingleResp = new CommentSingleResponseDto(
-                    comment.Id,
-                    comment.CreatedAt,
-                    comment.UpdatedAt,
-                    comment.Body,
-                    new ProfileResponseDto(
-                        comment.Author.Username,
-                        comment.Author.Bio,
-                        comment.Author.Image,
-                        await _unitOfWork.UserRepository.IsFollowingAsync(comment.Author.Username, currentUsername)
-                    ));
+                bool isCurrUserFollowingCommentAuthor = await _unitOfWork.UserRepository.IsFollowingAsync(comment.Author.Username, currentUsername);
+                var commentSingleResp = CommentMapper.MapCommentToCommentSingleResponseDto(comment, isCurrUserFollowingCommentAuthor);
                 commentsResp.Add(commentSingleResp);
             }
             return commentsResp;

@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Realworld.Api.Dto;
+using Realworld.Api.Mapping;
 using Realworld.Api.Models;
 using Realworld.Api.Services;
+using Realworld.Api.Utils.Auth;
 
 namespace Realworld.Api.Controllers {
 
@@ -20,9 +22,8 @@ namespace Realworld.Api.Controllers {
         }
 
         [HttpGet("api/articles/{slug}")]
-        //no need auth, but we can still get current user name from httpContext (must put on [Authorize schme = JwtBearerDefaults.AuthenticationScheme])
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [AllowAnonymous]
+        //no need auth, but we can still get current user name from httpContext
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Policy.OptionalAuthenticated)]
         public async Task<ArticleSingleEnvelope<ArticleSingleResponseDto>> GetArticleBySlugAsync(string slug) {
             //var user = User.Claims;
             var article = await _articleService.GetArticleBySlugAsync(slug);
@@ -64,54 +65,31 @@ namespace Realworld.Api.Controllers {
             return new ArticleSingleEnvelope<ArticleSingleResponseDto>(unfavoritedArticleResp);
         }
 
-        [HttpGet("api/articles")]        
+        [HttpGet("api/articles")]    
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Policy.OptionalAuthenticated)]    
         public async Task<ArticlesMultipleEnvelope<ArticleSingleResponseDto>> ListArticlesAsync([FromQuery] ArticlesQueryDto articlesQuery) { //model from query instead of from body
-            var articles = await _articleService.ListArticlesAsync(articlesQuery, false);
-            var articleSingleRespList = articles.Articles.Select(a => new ArticleSingleResponseDto(
-            a.Slug,
-            a.Title,
-            a.Description,
-            a.Body,
-            a.Tags.Select(t => t.Id).ToList(),
-            a.CreatedAt,
-            a.UpdatedAt,
-            a.Favorited,
-            a.FavoritesCount,
-            new ProfileResponseDto(
-                a.Author.Username,
-                a.Author.Bio,
-                a.Author.Image,
-                //a.Author.Followers.Any(f => f.FollowerName == currentUsername) TODO: implement this
-                false
-            )
-            )).ToList();
-            return new ArticlesMultipleEnvelope<ArticleSingleResponseDto>(articleSingleRespList, articles.ArticlesCount);
+            string currentUsername = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value; //can be null or not
+            var articlesWithTotalCount = await _articleService.ListArticlesAsync(articlesQuery, false);
+            var articleSingleRespList = articlesWithTotalCount.Articles.Select(a => {
+                bool isCurrUserFollowingArticleAuthor = currentUsername != null ?
+                        a.Author.Followers.Any(f => f.FollowerName == currentUsername) :
+                        false; //if not login, then following = false
+                return ArticleMapper.MapArticleToArticleSingleResponseDto(a, isCurrUserFollowingArticleAuthor);
+            }).ToList();
+            return new ArticlesMultipleEnvelope<ArticleSingleResponseDto>(articleSingleRespList, articlesWithTotalCount.ArticlesCount);
         }
 
         [HttpGet("api/articles/feed")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ArticlesMultipleEnvelope<ArticleSingleResponseDto>> FeedArticlesAsync([FromQuery] ArticlesFeedQueryDto articlesFeedQuery) {
+            string currentUsername = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             ArticlesQueryDto articlesQuery = new ArticlesQueryDto(null, null, null, articlesFeedQuery.Limit, articlesFeedQuery.Offset);
-            var articles = await _articleService.ListArticlesAsync(articlesQuery, isFeed: true);
-            var articleSingleRespList = articles.Articles.Select(a => new ArticleSingleResponseDto(
-            a.Slug,
-            a.Title,
-            a.Description,
-            a.Body,
-            a.Tags.Select(t => t.Id).ToList(),
-            a.CreatedAt,
-            a.UpdatedAt,
-            a.Favorited,
-            a.FavoritesCount,
-            new ProfileResponseDto(
-                a.Author.Username,
-                a.Author.Bio,
-                a.Author.Image,
-                //a.Author.Followers.Any(f => f.FollowerName == currentUsername) TODO: implement this
-                true
-            )
-            )).ToList();
-            return new ArticlesMultipleEnvelope<ArticleSingleResponseDto>(articleSingleRespList, articles.ArticlesCount);
+            var articlesWithTotalCount = await _articleService.ListArticlesAsync(articlesQuery, isFeed: true);
+            var articleSingleRespList = articlesWithTotalCount.Articles.Select(a => {
+                bool isCurrUserFollowingArticleAuthor = a.Author.Followers.Any(f => f.FollowerName == currentUsername);
+                return ArticleMapper.MapArticleToArticleSingleResponseDto(a, isCurrUserFollowingArticleAuthor);
+            }).ToList();
+            return new ArticlesMultipleEnvelope<ArticleSingleResponseDto>(articleSingleRespList, articlesWithTotalCount.ArticlesCount);
         }
     }
 }

@@ -1,6 +1,8 @@
+using System.Net;
 using Realworld.Api.Data;
 using Realworld.Api.Dto;
 using Realworld.Api.Utils;
+using Realworld.Api.Utils.ExceptionHandling;
 
 namespace Realworld.Api.Services
 {
@@ -19,9 +21,8 @@ namespace Realworld.Api.Services
         {
             var transaction = await _unitOfWork.BeginTransactionAsync();
             var profileUser = await _unitOfWork.UserRepository.GetUserByUsernameAsync(profileUsername);
-            if (profileUser is null)
-            {
-                throw new Exception("profile user not found");
+            if (profileUser is null) {
+                throw new ConduitException(HttpStatusCode.NotFound, new { Profile = ConduitErrors.NOT_FOUND });
             }
             // this require [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] in controller calling this service method
             string currentUsername = _currentUsernameAccessor.GetCurrentUsername();
@@ -34,9 +35,8 @@ namespace Realworld.Api.Services
         public async Task<ProfileResponseDto> GetProfileAsync(string profileUsername)
         {
             var profileUser = await _unitOfWork.UserRepository.GetUserByUsernameAsync(profileUsername);
-            if (profileUser is null)
-            {
-                throw new Exception("profile user not found");
+            if (profileUser is null) {
+                throw new ConduitException(HttpStatusCode.NotFound, new { Profile = ConduitErrors.NOT_FOUND });
             }
 
             string currentUsername = _currentUsernameAccessor.GetCurrentUsername();
@@ -48,9 +48,8 @@ namespace Realworld.Api.Services
         {
             var transaction = await _unitOfWork.BeginTransactionAsync();
             var profileUser = await _unitOfWork.UserRepository.GetUserByUsernameAsync(profileUsername);
-            if (profileUser is null)
-            {
-                throw new Exception("profile user not found");
+            if (profileUser is null) {
+                throw new ConduitException(HttpStatusCode.NotFound, new { Profile = ConduitErrors.NOT_FOUND });
             }
             string currentUsername = _currentUsernameAccessor.GetCurrentUsername();
             _unitOfWork.UserRepository.Unfollow(profileUsername, currentUsername);

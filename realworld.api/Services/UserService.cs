@@ -1,8 +1,10 @@
+using System.Net;
 using Microsoft.IdentityModel.Tokens;
 using Realworld.Api.Data;
 using Realworld.Api.Dto;
 using Realworld.Api.Models;
 using Realworld.Api.Utils;
+using Realworld.Api.Utils.ExceptionHandling;
 
 namespace Realworld.Api.Services {
     public class UserService: IUserService
@@ -38,7 +40,7 @@ namespace Realworld.Api.Services {
     {
         var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(username);
         if (user == null) {
-            throw new UnauthorizedAccessException("user not exists");
+            throw new ConduitException(HttpStatusCode.Forbidden, new { User = ConduitErrors.UNAUTHORIZED });
         }
         return new UserResponseDto(user.Username, user.Email, user.Token, user.Bio, user.Image);
     }
@@ -47,7 +49,7 @@ namespace Realworld.Api.Services {
         {
             var user = await _unitOfWork.UserRepository.GetUserByEmailAsync(userLoginReq.Email);
             if (user == null || user.Password != userLoginReq.Password) {
-                throw new UnauthorizedAccessException("Invalid email or password");
+                throw new ConduitException(HttpStatusCode.Forbidden, new { User = ConduitErrors.UNAUTHORIZED });
             }
             return new UserResponseDto(user.Username, user.Email, user.Token, user.Bio, user.Image);
         }
