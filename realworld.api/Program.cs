@@ -14,6 +14,9 @@ using FluentValidation.AspNetCore;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
+using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
+using Serilog.Formatting.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +30,51 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
+builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
+    .MinimumLevel.Information()
+    //logging of Microsoft and System is too verbose, so we override it
+    //they're only logged in the warning level, sourceContext 
+    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+    .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
+    .ReadFrom.Configuration(hostingContext.Configuration)
+    .Enrich.WithProperty("ThreadId", Environment.ProcessId)
+    .WriteTo.Console(
+        outputTemplate: "{Timestamp:HH:mm:ss} [{Level}] {SourceContext} {Message}{NewLine}{Exception}",
+        theme: AnsiConsoleTheme.Code
+    )
+    .WriteTo.File(
+        path: "logs/log-.txt",
+        rollingInterval: RollingInterval.Day, 
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {SourceContext} {Message}{NewLine}{Exception}"
+    )
+    .WriteTo.File(
+        formatter: new JsonFormatter(), 
+        path: "logs/log-.json"
+    )
+);
+
+// //global logger
+// Log.Logger = new LoggerConfiguration()
+//     .MinimumLevel.Information()
+//     .Enrich.WithProperty("ThreadId", Environment.ProcessId)
+//     .WriteTo.Console(
+//         outputTemplate: "{Timestamp:HH:mm:ss} [{Level}] {SourceContext} {Message}{NewLine}{Exception}",
+//         theme: AnsiConsoleTheme.Code
+//     )
+//     .WriteTo.File(
+//         path: "logs/log-.txt",
+//         rollingInterval: RollingInterval.Day, 
+//         outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {SourceContext} {Message}{NewLine}{Exception}"
+//     )
+//     .WriteTo.File(
+//         formatter: new JsonFormatter(), 
+//         path: "logs/log-.json"
+//     )
+//     .CreateLogger();
+
+// //this is the message
+// Log.Information("Starting up {AppName}", builder.Environment.ApplicationName);
+
 //builder.Services.Configure<ApiBehaviorOptions>(opts => opts.SuppressModelStateInvalidFilter = false);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -34,7 +82,7 @@ builder.Services.AddSwaggerGen(option =>
 {
     option.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
-        Description = "Standard Authorization header using the bearer scheme (\"bearer {token}\")",
+        Description = "Standard Authorization header using the bearer scheme (\"Token {token}\")",
         In = ParameterLocation.Header,
         Name = "Authorization",
         Type = SecuritySchemeType.ApiKey
@@ -71,8 +119,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     return Task.CompletedTask;
                 }
 
-                if (authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)) {
-                    context.Token = authorization.Substring("Bearer ".Length).Trim();
+                if (authorization.StartsWith("Token ", StringComparison.OrdinalIgnoreCase)) {
+                    context.Token = authorization.Substring("Token ".Length).Trim();
                 }
 
                 if (string.IsNullOrEmpty(context.Token)) {
@@ -109,7 +157,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseMiddleware<GetAuthInfoMiddleware>();
