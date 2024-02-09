@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Realworld.Api.Services;
+using Realworld.Api.Utils.Auth;
 
 namespace Realworld.Api.Controllers {
 
@@ -14,7 +15,7 @@ namespace Realworld.Api.Controllers {
 
         [HttpGet("api/tags")]
         [ProducesResponseType(type: typeof(TagEnvelope), statusCode: 200)]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Policy.OptionalAuthenticated)]
         public async Task<TagEnvelope> GetTagsAsync() {
             var tags = await _tagService.GetTagsAsync();
             return new TagEnvelope(tags);

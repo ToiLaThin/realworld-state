@@ -32,15 +32,18 @@ namespace Realworld.Api.Controllers {
 
         [HttpPost("api/articles")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ArticleSingleEnvelope<ArticleSingleResponseDto>> CreateArticleAsync(CreateArticleRequestDto createArticleReq) {
-            var article = await _articleService.CreateArticleAsync(createArticleReq);
+        //because the request require { "article": { ... } }, so we need to use ArticleSingleEnvelope to wrap the request
+        public async Task<ArticleSingleEnvelope<ArticleSingleResponseDto>> CreateArticleAsync(ArticleSingleEnvelope<CreateArticleRequestDto> createArticleReq) {
+            var req = createArticleReq.Article;
+            var article = await _articleService.CreateArticleAsync(req);
             return new ArticleSingleEnvelope<ArticleSingleResponseDto>(article);
         }
 
         [HttpPut("api/articles/{slug}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ArticleSingleEnvelope<ArticleSingleResponseDto>> UpdateArticleAsync(string slug,[FromBody] UpdateArticleRequestDto updateArticleReq) {
-            var updatedArticleResp = await _articleService.UpdateArticleAsync(slug, updateArticleReq);
+        public async Task<ArticleSingleEnvelope<ArticleSingleResponseDto>> UpdateArticleAsync(string slug,[FromBody] ArticleSingleEnvelope<UpdateArticleRequestDto> updateArticleReq) {
+            var req = updateArticleReq.Article;
+            var updatedArticleResp = await _articleService.UpdateArticleAsync(slug, req);
             return new ArticleSingleEnvelope<ArticleSingleResponseDto>(updatedArticleResp);
         }
 
@@ -68,7 +71,7 @@ namespace Realworld.Api.Controllers {
         [HttpGet("api/articles")]    
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = Policy.OptionalAuthenticated)]    
         public async Task<ArticlesMultipleEnvelope<ArticleSingleResponseDto>> ListArticlesAsync([FromQuery] ArticlesQueryDto articlesQuery) { //model from query instead of from body
-            string currentUsername = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value; //can be null or not
+            string? currentUsername = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value; //can be null or not
             var articlesWithTotalCount = await _articleService.ListArticlesAsync(articlesQuery, false);
             var articleSingleRespList = articlesWithTotalCount.Articles.Select(a => {
                 bool isCurrUserFollowingArticleAuthor = currentUsername != null ?
@@ -82,7 +85,7 @@ namespace Realworld.Api.Controllers {
         [HttpGet("api/articles/feed")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ArticlesMultipleEnvelope<ArticleSingleResponseDto>> FeedArticlesAsync([FromQuery] ArticlesFeedQueryDto articlesFeedQuery) {
-            string currentUsername = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            string? currentUsername = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             ArticlesQueryDto articlesQuery = new ArticlesQueryDto(null, null, null, articlesFeedQuery.Limit, articlesFeedQuery.Offset);
             var articlesWithTotalCount = await _articleService.ListArticlesAsync(articlesQuery, isFeed: true);
             var articleSingleRespList = articlesWithTotalCount.Articles.Select(a => {

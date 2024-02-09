@@ -7,6 +7,7 @@ using Realworld.Api.Data;
 using Realworld.Api.Dto;
 using Realworld.Api.Services;
 using Realworld.Api.Utils;
+using Serilog;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Security.Claims;
@@ -34,16 +35,16 @@ namespace Realworld.Api.Controllers
         }
 
         [HttpPost("api/users/login")]
-        public async Task<UserEnvelope<UserResponseDto>> Authenticate(RequestEnvelope<UserEnvelope<LoginUserRequestDto>> requestEnvelope) {
-            var loginUserReq = requestEnvelope.Body.User;
+        public async Task<UserEnvelope<UserResponseDto>> Authenticate(UserEnvelope<LoginUserRequestDto> requestEnvelope) {
+            var loginUserReq = requestEnvelope.User;
             var userRespone = await _userService.LoginAsync(loginUserReq);
             return new UserEnvelope<UserResponseDto>(userRespone);
         }
 
         [HttpPost("api/users")]
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<UserEnvelope<UserResponseDto>> Registration(RequestEnvelope<UserEnvelope<CreateUserRequestDto>> requestEnvelope) {
-            var registerUserReq = requestEnvelope.Body.User;
+        public async Task<UserEnvelope<UserResponseDto>> Registration(UserEnvelope<CreateUserRequestDto> requestEnvelope) {
+            var registerUserReq = requestEnvelope.User;
             var userResponse = await _userService.CreateAsync(registerUserReq);
             return new UserEnvelope<UserResponseDto>(userResponse);
         }
@@ -58,8 +59,8 @@ namespace Realworld.Api.Controllers
 
         [HttpPut("api/user")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<UserEnvelope<UserResponseDto>> UpdateUser(RequestEnvelope<UserEnvelope<UpdateUserRequestDto>> requestEnvelope) {
-            var updateUserReq = requestEnvelope.Body.User;
+        public async Task<UserEnvelope<UserResponseDto>> UpdateUser(UserEnvelope<UpdateUserRequestDto> requestEnvelope) {
+            var updateUserReq = requestEnvelope.User;
             var userResponse = await _userService.UpdateAsync(updateUserReq);
             return new UserEnvelope<UserResponseDto>(userResponse);
         }

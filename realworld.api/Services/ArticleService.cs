@@ -71,24 +71,25 @@ namespace Realworld.Api.Services
             //asNoTracking: false to allow update
             var article = await _unitOfWork.ArticleRepository.GetArticleBySlugAsync(slug, asNoTracking: false, currentUsername);
             if (article == null) {
-                throw new Exception("not found article");
+                throw new ConduitException(HttpStatusCode.NotFound, new { Article = ConduitErrors.NOT_FOUND });
             }
 
             if (article.Author.Username != currentUsername) {
-                throw new Exception("not authorized");
+                throw new ConduitException(HttpStatusCode.Forbidden, new { Article = ConduitErrors.UNAUTHORIZED });
             }
 
-            if (string.IsNullOrEmpty(updateArticleReq.Title) ||
-                string.IsNullOrEmpty(updateArticleReq.Description) ||
+            if (string.IsNullOrEmpty(updateArticleReq.Title) &&
+                string.IsNullOrEmpty(updateArticleReq.Description) &&
                 string.IsNullOrEmpty(updateArticleReq.Body))
             {
+                //this should be done in action filter validation (add validator to this request model)
                 throw new Exception("invalid request");
             }
 
-            article.Title = updateArticleReq.Title;
-            article.Slug = article.Title.GenerateSlug();
-            article.Description = updateArticleReq.Description;
-            article.Body = updateArticleReq.Body;
+            article.Title = updateArticleReq.Title ?? article.Title;
+            article.Slug = article.Title.GenerateSlug() ?? article.Slug;
+            article.Description = updateArticleReq.Description ?? article.Description;
+            article.Body = updateArticleReq.Body ?? article.Body;
             article.UpdatedAt = DateTime.UtcNow;
 
             await _unitOfWork.CommitTransactionAsync(transaction);
@@ -135,6 +136,11 @@ namespace Realworld.Api.Services
             _unitOfWork.ArticleFavoriteRepository.AddArticleFavorite(new ArticleFavoriteLink(article.Id, user.Username));
             await _unitOfWork.CommitTransactionAsync(transaction);
 
+            //recalculate the favorited count, favorited to prepare to map to response
+            //these are calc props, so no need to save to db
+            //these should be put in the mapping func
+            article.Favorited = article.UserFavoritesArticleMappings.Any(f => f.Username == currentUsername);
+            article.FavoritesCount = article.UserFavoritesArticleMappings.Count;
             bool isCurrUserFollowingArticleAuthor = article.Author.Followers.Any(f => f.FollowerName == currentUsername);
             return ArticleMapper.MapArticleToArticleSingleResponseDto(article, isCurrUserFollowingArticleAuthor);
         }

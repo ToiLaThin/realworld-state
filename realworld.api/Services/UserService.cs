@@ -57,15 +57,23 @@ namespace Realworld.Api.Services {
         public async Task<UserResponseDto> UpdateAsync(UpdateUserRequestDto userUpdateReq)
         {
             var transaction = await _unitOfWork.BeginTransactionAsync();
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(userUpdateReq.Username);
-            if (userUpdateReq.Username != user.Username) {
+            User user = null;
+            if (userUpdateReq.Username != null) {
+                user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(userUpdateReq.Username);                
+            }
+            else {
+                user = await _unitOfWork.UserRepository.GetUserByEmailAsync(userUpdateReq.Email);
+            }
+            
+            if (userUpdateReq.Username != user.Username && userUpdateReq.Username != null) {
                 user.Token = _jwtTokenGenerator.GenerateToken(user.Username);
             }
-            user.Username = userUpdateReq.Username;
-            user.Email = userUpdateReq.Email;
-            user.Password = userUpdateReq.Password;
-            user.Bio = userUpdateReq.Bio;
-            user.Image = userUpdateReq.Image;
+            //we should validate in action filter so we do not have to check for null
+            user.Username = userUpdateReq.Username ?? user.Username;
+            user.Email = userUpdateReq.Email ?? user.Email;
+            user.Password = userUpdateReq.Password ?? user.Password;
+            user.Bio = userUpdateReq.Bio ?? user.Bio;
+            user.Image = userUpdateReq.Image ?? user.Image;
             await _unitOfWork.UserRepository.UpdateUserAsync(user);
             await _unitOfWork.CommitTransactionAsync(transaction);
             return new UserResponseDto(user.Username, user.Email, user.Token, user.Bio, user.Image);
