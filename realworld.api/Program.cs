@@ -148,9 +148,18 @@ builder.Services.AddScoped<ICommentService, CommentService>();
 //register the auth handler
 builder.Services.AddSingleton<IAuthorizationHandler, OptionalAuthHandler>();
 
+//register cors policy name
+var corsPolicyName = "cors_me";
+builder.Services.AddCors(opt => {
+    opt.AddPolicy(name: corsPolicyName, policy => {
+        policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+    });
+});
+
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseCors(corsPolicyName);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

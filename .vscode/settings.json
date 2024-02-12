@@ -5,19 +5,6 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        "[!r]*/**": true,
-        "r[!e]*/**": true,
-        "re[!a]*/**": true,
-        "rea[!l]*/**": true,
-        "real[!w]*/**": true,
-        "realw[!o]*/**": true,
-        "realwo[!r]*/**": true,
-        "realwor[!l]*/**": true,
-        "realworl[!d]*/**": true,
-        "realworld[!.]*/**": true,
-        "realworld.[!a]*/**": true,
-        "realworld.a[!p]*/**": true,
-        "realworld.ap[!i]*/**": true
+        "**/Thumbs.db": true
     }
 }
