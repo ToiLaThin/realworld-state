@@ -158,8 +158,14 @@ builder.Services.AddCors(opt => {
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+  var db = scope.ServiceProvider.GetRequiredService<ConduitContext>();
+  db.Database.Migrate();
+}
+
+app.UseCors(corsPolicyName); //change order to avoid error cors policy
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.UseCors(corsPolicyName);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
