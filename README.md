@@ -1,27 +1,24 @@
-# RealworldStateTest
+## About RealworldStateTest
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.0.
+This project is an implementation follow Realworld open source spec, this spec is followed by many developers internationally. The project purpose is to show how a real application is built, deployed using many different tech stack. From doing this project, I learnt a lot about Angular, State Management, Backend .Net Trick, Deployment using Azure Container Registry, Azure App Service.\
+Moreover, I got chances to read many open-source code of my favorite tech stack and have opportunity to hone my skill further. But for now, I haven't have intention to push my code to the CodeBaseShow of the Realworld Project but I may do that in the future when I have more confidence.
+[About Realworld Project](https://realworld-docs.netlify.app/)
 
-## Development server
+## Tech Stack used 
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+* **Angular 17 + State Management NgRx**
+* **.NET Core Web Api (.NET 7)** with N-layer + UnitOfWork Architecture & **Postgres Db**
+* Api Testing using **Newman** (run-api-tests.bat)
+* Deploy FE & BE separately
+---
 
-## Code scaffolding
+```
+Deploy Angular on Vercel with url: (https://realworld-state.vercel.app/)
+Deploy PostgresDb using Azure Database for PostgresSQL
+Deploy Containerized .NET Api using Azure Container Registry as source & Azure App Service with url: (https://realworldapiapp.azurewebsites.net)
+You can verify api working by navigating to this url and get articles data: (https://realworldapiapp.azurewebsites.net/api/articles)
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Team Size & Duration of project
+Team Size: *1*
+Duration: *(22/01 - 13/02)*
