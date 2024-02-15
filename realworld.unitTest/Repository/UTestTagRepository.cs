@@ -9,17 +9,8 @@ namespace Realworld.UnitTest.Repository
         protected Realworld.Api.Data.TagRepository TagRepository { get; init; }
         public UTestTagRepository(FixtureUTestRepository fixture) : base(fixture)
         {
-            this.SeedDb();
-            TagRepository = new Realworld.Api.Data.TagRepository(base.ConduitContext);
-        }
-
-        public override void SeedDb()
-        {
             base.SeedDb();
-            bool isDbJustCreated = ConduitContext.Database.EnsureCreated();
-            if (ConduitContext.Tags.Any()) return;
-            ConduitContext.Tags.AddRange(base.DummyTags);
-            ConduitContext.SaveChanges();
+            TagRepository = new Realworld.Api.Data.TagRepository(base.ConduitContext);
         }
 
         [Fact]

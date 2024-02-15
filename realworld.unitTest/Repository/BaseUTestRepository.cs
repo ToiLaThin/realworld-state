@@ -14,6 +14,10 @@ namespace Realworld.UnitTest.Repository
     protected IEnumerable<User> DummyUsers { get; init; }
 
     protected IEnumerable<Tag> DummyTags { get; init; }
+
+    protected IEnumerable<Article> DummyArticles { get; init; }
+
+    protected IEnumerable<Comment> DummyComments { get; init; }
     protected Realworld.Api.Data.ConduitContext ConduitContext { get; init; }
 
     public BaseUTestRepository(FixtureUTestRepository fixture)
@@ -38,20 +42,51 @@ namespace Realworld.UnitTest.Repository
 
       DbContextOptions<ConduitContext> dbContextOptions = new DbContextOptionsBuilder<ConduitContext>()
           .UseNpgsql(_connectionString)
+          .EnableSensitiveDataLogging() //for viewing conflict key error in change tracking
           .Options;
       ConduitContext = new Realworld.Api.Data.ConduitContext(dbContextOptions);
 
       DummyUsers = _dummyDataProvider.GetDummyUsers();
       DummyTags = _dummyDataProvider.GetDummyTags();
+      DummyArticles = _dummyDataProvider.GetDummyArticles();
+      DummyComments = _dummyDataProvider.GetDummyComments();
     }
 
     public void Dispose()
     {
+      var transaction = ConduitContext.Database.BeginTransaction();
       ConduitContext.Users.RemoveRange(ConduitContext.Users.ToList());
+      ConduitContext.Articles.RemoveRange(ConduitContext.Articles.ToList());
       ConduitContext.Tags.RemoveRange(ConduitContext.Tags.ToList());
       ConduitContext.SaveChanges();
+      transaction.Commit();
     }
 
-    public virtual void SeedDb() { }
+    public void SeedDb()
+    {
+      bool isDbJustCreated = ConduitContext.Database.EnsureCreated();
+      var transaction = ConduitContext.Database.BeginTransaction();
+      if (ConduitContext.Tags.Any()) return;
+      foreach (var tag in DummyTags) {
+        ConduitContext.Entry(tag).State = EntityState.Added;
+      }
+
+      if (ConduitContext.Users.Any()) return;
+      foreach (var user in DummyUsers) {
+        ConduitContext.Entry(user).State = EntityState.Added; //should do it this way to avoid entity already tracked error
+      }
+
+      if (ConduitContext.Articles.Any()) return;
+      foreach (var article in DummyArticles)
+      {
+        ConduitContext.Entry(article).State = EntityState.Added;
+      }
+
+      if (ConduitContext.Comments.Any()) return;
+      ConduitContext.Comments.AddRange(DummyComments);
+
+      ConduitContext.SaveChanges();
+      transaction.Commit();
+    }
   }
 }

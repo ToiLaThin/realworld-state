@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Realworld.Api.Data;
 using Realworld.Api.Models;
 
@@ -8,17 +9,8 @@ namespace Realworld.UnitTest.Repository
     {
         protected Realworld.Api.Data.UserRepository UserRepository { get; init; }
         public UTestUserRepository(FixtureUTestRepository fixture) : base(fixture) { 
-            this.SeedDb();
-            UserRepository = new Realworld.Api.Data.UserRepository(base.ConduitContext);
-        }
-
-        public override void SeedDb()
-        {
             base.SeedDb();
-            bool isDbJustCreated = ConduitContext.Database.EnsureCreated();
-            if (ConduitContext.Users.Any()) return;
-            ConduitContext.Users.AddRange(DummyUsers);
-            ConduitContext.SaveChanges();
+            UserRepository = new Realworld.Api.Data.UserRepository(base.ConduitContext);
         }
 
         [Theory]
@@ -51,6 +43,7 @@ namespace Realworld.UnitTest.Repository
         {
             var actualUser = await UserRepository.GetUserByEmailAsync(email);
             var expectedUser = base.DummyUsers.FirstOrDefault(u => u.Email == email);
+            expectedUser.CommentsAboutArticle = null; //because the prepared data in DummyDataProvider has no CommentsAboutArticle
             Assert.NotNull(actualUser);
             expectedUser.Should().BeEquivalentTo(actualUser);
             expectedUser.Should().BeOfType<User>();
@@ -80,5 +73,76 @@ namespace Realworld.UnitTest.Repository
             actualUser.Should().BeOfType<User>();
         }
 
+        [Fact]
+        public async Task WhenUpdateUser_VerifyCorrectUserUpdated()
+        {
+            //Arrange
+            var existingUser = base.ConduitContext.Users.First();
+            existingUser.Bio = "new bio";
+            existingUser.Image = "new image";
+
+            //Act
+            await UserRepository.UpdateUserAsync(existingUser);
+            base.ConduitContext.SaveChanges();
+
+            //Assert
+            var actualUser = await UserRepository.GetUserByUsernameAsync(existingUser.Username);
+            Assert.NotNull(actualUser);
+            actualUser.Should().BeEquivalentTo(existingUser);
+            actualUser.Should().BeAssignableTo<User>();
+        }
+
+        [Fact]
+        public async Task WhenVerifyTwoUnfollowedUser_ReturnUserNotFollowed()
+        {
+            //Arrange
+            var firstUserToBeFollowed = base.ConduitContext.Users.First();
+            var secondUserToFollowed = base.ConduitContext.Users.Skip(1).First();
+
+            //Act
+            var isFirstUserFollowedSecondUser = await UserRepository.IsFollowingAsync(firstUserToBeFollowed.Username, secondUserToFollowed.Username);
+
+            //Assert
+            Assert.False(isFirstUserFollowedSecondUser);
+        }
+
+        [Fact]
+        public async Task WhenFirstUserFollowedBySeconduser_ReturnFollowedResult()
+        {
+            //Arrange
+            var firstUserToBeFollowed = base.ConduitContext.Users.First();
+            var secondUserToFollowed = base.ConduitContext.Users.Skip(1).First();
+
+            //Act
+            UserRepository.Follow(firstUserToBeFollowed.Username, secondUserToFollowed.Username);
+            base.ConduitContext.SaveChanges();
+
+            //Assert
+            var isFirstUserFollowedSecondUser = await UserRepository.IsFollowingAsync(firstUserToBeFollowed.Username, secondUserToFollowed.Username);
+            Assert.True(isFirstUserFollowedSecondUser);
+            //avoid data inconsistency with other tests
+            ConduitContext.UserLinks.Entry(new UserLink() { UserName = firstUserToBeFollowed.Username, FollowerName = secondUserToFollowed.Username }).State = EntityState.Deleted;
+            await ConduitContext.SaveChangesAsync();
+        }
+
+        [Fact]
+        public async Task GivenFirstUserFollowedBySecondUser_WhenUnfollow_ReturnNotFollowedResult()
+        {
+            //Arrange
+            var transaction = await ConduitContext.Database.BeginTransactionAsync();
+            var firstUserToBeFollowed = base.ConduitContext.Users.First();
+            var secondUserToFollowed = base.ConduitContext.Users.Skip(1).First();
+            UserRepository.Follow(firstUserToBeFollowed.Username, secondUserToFollowed.Username);
+            base.ConduitContext.SaveChanges();
+
+            //Act
+            UserRepository.Unfollow(firstUserToBeFollowed.Username, secondUserToFollowed.Username);
+            base.ConduitContext.SaveChanges();
+            await transaction.CommitAsync();
+
+            //Assert
+            var isFirstUserFollowedSecondUser = await UserRepository.IsFollowingAsync(firstUserToBeFollowed.Username, secondUserToFollowed.Username);
+            Assert.False(isFirstUserFollowedSecondUser);
+        }
     }
 }
