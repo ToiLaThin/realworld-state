@@ -36,12 +36,16 @@ namespace Realworld.Api.Data
 
     public void Follow(string username, string followerName)
     {
-        _context.UserLinks.Add(new UserLink { UserName = username, FollowerName = followerName });
+        // _context.UserLinks.Add(new UserLink { UserName = username, FollowerName = followerName });
+        var newUserLink = new UserLink { UserName = username, FollowerName = followerName };
+        _context.UserLinks.Entry(newUserLink).State = EntityState.Added;        
     }
 
     public void Unfollow(string username, string followerName)
     {
-        _context.UserLinks.Remove(new UserLink { UserName = username, FollowerName = followerName });
+        // _context.UserLinks.Remove(new UserLink { UserName = username, FollowerName = followerName });
+        var userLink = _context.UserLinks.FirstOrDefault(ul => ul.UserName == username && ul.FollowerName == followerName); //change back to not create new but find existing from db
+        _context.UserLinks.Entry(userLink).State = EntityState.Deleted;        
     }
   }
 }
