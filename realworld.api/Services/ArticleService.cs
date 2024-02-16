@@ -50,7 +50,7 @@ namespace Realworld.Api.Services
             string? currentUsername = _currentUsernameAccessor.GetCurrentUsername(); //if not login, then null
             var article = await _unitOfWork.ArticleRepository.GetArticleBySlugAsync(slug, asNoTracking: true, currentUsername);
             if (article == null) {
-                throw new Exception("not found article");
+                throw new ConduitException(HttpStatusCode.NotFound, new { Article = ConduitErrors.NOT_FOUND });
             }
             var comments = await _unitOfWork.CommentRepository.GetCommentsBySlugAsync(slug, currentUsername);
             article.ArticleComments = comments;
@@ -103,11 +103,11 @@ namespace Realworld.Api.Services
             string currentUsername = _currentUsernameAccessor.GetCurrentUsername();
             var article = await _unitOfWork.ArticleRepository.GetArticleBySlugAsync(slug, asNoTracking: false, currentUsername);
             if (article == null) {
-                throw new Exception("not found article");
+                throw new ConduitException(HttpStatusCode.NotFound, new { Article = ConduitErrors.NOT_FOUND });
             }
 
             if (article.Author.Username != currentUsername) {
-                throw new Exception("not authorized");
+                throw new ConduitException(HttpStatusCode.Forbidden, new { Article = ConduitErrors.UNAUTHORIZED });
             }
 
             _unitOfWork.ArticleRepository.DeleteArticle(article);
