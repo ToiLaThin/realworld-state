@@ -16,7 +16,14 @@ jobs:
         uses: actions/setup-node@v4
         with: 
           node-version: '20'
-      - name: Build and Deploy GitHub Pages
+
+      - name: Install dependencies
+      - run: npm install
+
+      - name: Build Angular app
+      - run: npm run build -- --base-href=/realworld-state
+
+      - name: Deploy GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.ACCESS_TOKEN }}
