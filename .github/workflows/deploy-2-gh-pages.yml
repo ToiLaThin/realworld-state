@@ -9,7 +9,7 @@ on:
       - completed
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps: 
       - uses: actions/checkout@v4
       - name: Use Node.js version 20
@@ -17,13 +17,12 @@ jobs:
         with: 
           node-version: '20'
       - name: Build and Deploy GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@releases/v2
-        env:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          BASE_BRANCH: main
-          BRANCH: gh-pages
-          FOLDER: dist/realworld-state-test/browser
-          BUILD_SCRIPT: npm install && npm run build -- --base-href=/realworld-state
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.ACCESS_TOKEN }}
+          publish_dir: ./dist/realworld-state-test/browser  # Adjust this to match your Angular app's build output directory
+          publish_branch: gh-pages
+          force_orphan: true
       
       
       
