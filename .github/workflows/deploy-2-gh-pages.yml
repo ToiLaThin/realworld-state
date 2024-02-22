@@ -7,6 +7,7 @@ on:
       - main
     types:
       - completed
+
 jobs:
   deploy:
     runs-on: ubuntu-22.04
@@ -22,7 +23,7 @@ jobs:
         run: npm install
 
       - name: Build Angular app
-        run: npm run build -- --base-href=/realworld-state
+        run: npm run build -- --base-href=/realworld-state/
 
       - name: Deploy GitHub Pages
         uses: crazy-max/ghaction-github-pages@v4
@@ -30,6 +31,7 @@ jobs:
           target_branch: gh-pages
           build_dir: ./dist/realworld-state-test/browser
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}    
       
       
