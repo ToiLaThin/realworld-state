@@ -2,6 +2,8 @@
 
 # Compiled output
 /dist
+# Remove dist from gitignore if you want to push the build files to the repo for deployment to github pages 
+# move to a temp branch not to be merged or rebase first
 /tmp
 /out-tsc
 /bazel-out
