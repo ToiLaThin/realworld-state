@@ -3,6 +3,7 @@ import { ILoginRequest } from '../../auth/types/loginRequest.interface'
 import { IUser } from '../../core/models/user.interface'
 import { IErrors } from '../../core/ui-models/errors.interface'
 import { ISettingsRequest } from '../../settings/types/settingsRequest.interface'
+import { IRegisterRequest } from '../../auth/types/registerRequest.interface'
 
 //actions are the events that are dispatched to the store
 //to trigger reducers (which are pure functions) to update the state
@@ -12,9 +13,11 @@ export const loginActions = createActionGroup({
     'Login': props<{ loginRequest: ILoginRequest }>(),
     'Login Success': props<{ returnedUser: IUser }>(),
     'Login Failure': props<{ errors: IErrors }>(),
+    'Register': props<{ registerRequest: IRegisterRequest }>(),
+    'Register Success': props<{ returnedUser: IUser }>(),
+    'Register Failure': props<{ errors: IErrors }>(),
   },
 })
-
 
 export const settingsActions = createActionGroup({
   source: 'Settings Feature Module',
