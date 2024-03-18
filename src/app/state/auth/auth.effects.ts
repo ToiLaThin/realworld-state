@@ -1,4 +1,4 @@
-import { Actions, createEffect, ofType } from '@ngrx/effects'
+import { Actions, act, createEffect, ofType } from '@ngrx/effects'
 import { UserService } from '../../core/services/user.service'
 import { loginActions, logoutActions, settingsActions } from './auth.actions'
 import { catchError, map, of, switchMap, tap } from 'rxjs'
@@ -11,8 +11,8 @@ import { JwtService } from '../../shared/services/jwt.service'
 export class AuthEffect {
   constructor(
     private actions$: Actions,
-    private userService: UserService,   
-    private settingsService: SettingsService, 
+    private userService: UserService,
+    private settingsService: SettingsService,
     private jwtService: JwtService,
     private router: Router
   ) {}
@@ -22,7 +22,7 @@ export class AuthEffect {
       ofType(loginActions.login),
       switchMap(action => {
         return this.userService.login(action.loginRequest).pipe(
-          map(user => loginActions.loginSuccess({ returnedUser: user })),          
+          map(user => loginActions.loginSuccess({ returnedUser: user })),
           tap(_ => this.router.navigateByUrl('/')),
           catchError(errors => of(loginActions.loginFailure({ errors })))
         )
@@ -30,6 +30,18 @@ export class AuthEffect {
     )
   )
 
+  registerEffect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(loginActions.register),
+      switchMap(action => {
+        return this.userService.register(action.registerRequest).pipe(
+          map(user => loginActions.registerSuccess({ returnedUser: user })),
+          tap(_ => this.router.navigateByUrl('/')),
+          catchError(errs => of(loginActions.loginFailure({ errors: errs })))
+        )
+      })
+    )
+  )
   settingsEffect$ = createEffect(() =>
     this.actions$.pipe(
       ofType(settingsActions.updateSettings),

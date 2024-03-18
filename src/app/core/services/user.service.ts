@@ -6,6 +6,7 @@ import { IUser } from '../models/user.interface'
 import { Injectable } from '@angular/core'
 import { JwtService } from '../../shared/services/jwt.service'
 import { IProfile } from '../models/profile.interface'
+import { IRegisterRequest } from '../../auth/types/registerRequest.interface'
 
 //since state is register in root
 //the service must also registered in root
@@ -22,6 +23,20 @@ export class UserService {
       .post<{ user: IUser }>(`${env.API_BASE_URL}/users/login`, { user: loginRequest })
       .pipe(
         //the returned data is an object with a user: IUser property
+        map(data => data.user),
+        //tap operator to do side effect, we do not want to modify the stream
+        tap((returnedUser: IUser) => {
+          console.log('returnedUser', returnedUser)
+          console.log('returnedUser.token', returnedUser.token)
+          this.jwtService.saveToken(returnedUser.token)
+        })
+      )
+  }
+
+  register(registerRequest: IRegisterRequest): Observable<IUser> {
+    return this.http
+      .post<{ user: IUser }>(`${env.API_BASE_URL}/users`, { user: registerRequest })
+      .pipe(
         map(data => data.user),
         //tap operator to do side effect, we do not want to modify the stream
         tap((returnedUser: IUser) => {

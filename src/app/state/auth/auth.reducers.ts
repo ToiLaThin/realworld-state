@@ -33,6 +33,29 @@ export const authReducer = createReducer(
     validationErrors: action.errors,
   })),
   on(
+    loginActions.register,
+    (state): IAuthState => ({
+      ...state,
+      isSubmittingLoginRequest: true,
+      validationErrors: null
+    })
+  ),
+  on(
+    loginActions.registerSuccess, (state, action) => ({
+      ...state,
+      isSubmittingLoginRequest: false,
+      currentUser: action.returnedUser,
+      isLoggedIn: true
+    })
+  ),
+  on(
+    loginActions.registerFailure, (state, action) => ({
+      ...state,
+      isSubmittingLoginRequest: false,
+      validationErrors: action.errors
+    })
+  ),
+  on(
     settingsActions.updateSettings,
     (state): IAuthState => ({
       ...state,
