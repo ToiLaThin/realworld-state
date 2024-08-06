@@ -91,6 +91,7 @@ builder.Services.AddSwaggerGen(option =>
 });
 builder.Services.AddDbContext<ConduitContext>(options =>
 {
+    string connStr = builder.Configuration.GetConnectionString("ConduitConnString");
     options.UseNpgsql(builder.Configuration.GetConnectionString("ConduitConnString"));
     // no host name like . or PostgreSQL 15
 });
