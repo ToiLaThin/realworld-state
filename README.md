@@ -16,8 +16,8 @@ Moreover, I got chances to read many open-source code of my favorite tech stack 
 ```
 Deploy Angular on Vercel with url: (https://realworld-state.vercel.app/)
 Deploy PostgresDb using Azure Database for PostgresSQL
-Deploy Containerized .NET Api using Azure Container Registry as source & Azure App Service with url: (https://realworldapiapp.azurewebsites.net)
-You can verify api working by navigating to this url and get articles data: (https://realworldapiapp.azurewebsites.net/api/articles)
+Deploy Containerized .NET Api using Azure Container Registry as source & Azure App Service with url: (https://realworldapiapp-dabnfda0gqadasew.southeastasia-01.azurewebsites.net)
+You can verify api working by navigating to this url and get articles data: (https://realworldapiapp-dabnfda0gqadasew.southeastasia-01.azurewebsites.net/api/articles)
 ```
 
 ## Team Size & Duration of project
